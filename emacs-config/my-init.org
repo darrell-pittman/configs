@@ -1,0 +1,169 @@
+#+STARTUP: overview
+* Interface Tweeks
+  #+BEGIN_SRC emacs-lisp
+  (setq inhibit-startup-message t)
+  (tool-bar-mode -1)
+  (fset 'yes-or-no-p 'y-or-n-p)
+  (global-set-key (kbd "<f5>") 'revert-buffer)
+  (use-package zenburn-theme
+    :ensure t
+    :config (load-theme 'zenburn t))
+  #+END_SRC
+
+* Try
+  Allows trying packages
+  #+BEGIN_SRC emacs-lisp
+    (use-package try
+      :ensure t)
+  #+END_SRC
+
+* Which Key
+  Provides help for commands
+  #+BEGIN_SRC emacs-lisp
+    (use-package which-key
+      :ensure t
+      :config (which-key-mode))
+  #+END_SRC
+
+* ibuffer
+  Use ibuffer for list-buffers
+  #+BEGIN_SRC emacs-lisp
+    (defalias 'list-buffers 'ibuffer)
+  #+END_SRC
+
+* Org-Bullets
+  Adds formatting to .org files
+  #+BEGIN_SRC emacs-lisp
+    (use-package org-bullets
+      :ensure t
+      :config (add-hook 'org-mode-hook 'org-bullets-mode))
+  #+END_SRC
+
+* Ace-window
+  Adds numbers for selecting windows
+  #+BEGIN_SRC emacs-lisp
+    (use-package ace-window
+      :ensure t
+      :init
+      (progn
+        (global-set-key [remap other-window] 'ace-window)
+        (custom-set-faces
+         '(aw-leading-char-face
+           ((t (:inherit ace-jump-face-foreground :height 2.0)))))))
+   #+END_SRC
+
+* Swiper
+  Used for searches
+  #+BEGIN_SRC emacs-lisp
+    (use-package counsel
+      :ensure t)
+
+    (use-package ivy
+      :ensure t
+      :diminish (ivy-mode)
+      :bind (("C-x b" . ivy-switch-buffer))
+      :config
+      (progn
+        (ivy-mode 1)
+        (setq ivy-use-virtual-buffers t)
+        (setq ivy-display-style 'fancy)))
+
+
+    (use-package swiper
+      :ensure try
+      :bind (("C-s" . swiper)
+             ("C-r" . swiper)
+             ("C-c C-r" . ivy-resume)
+             ("M-x" . counsel-M-x)
+             ("C-x C-f" . counsel-find-file))
+      :config
+      (progn
+        (ivy-mode 1)
+        (setq ivy-use-virtual-buffers t)
+        (setq ivy-display-style 'fancy)
+        (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)))
+  #+END_SRC
+
+* Avy
+  Used for quick nav based on indexed highlighting
+  #+BEGIN_SRC emacs-lisp
+    (use-package avy
+      :ensure t
+      :bind("M-s" . avy-goto-char))
+  #+END_SRC
+
+* Company
+  Auto-lookup
+  #+BEGIN_SRC emacs-lisp
+    (use-package company
+      :ensure t
+      :config
+      (global-company-mode))
+  #+END_SRC
+
+* Multi-Cursors
+  #+BEGIN_SRC emacs-lisp
+    (use-package multiple-cursors
+      :ensure t
+      :bind(
+            ("C-S-c C-S-c" . mc/edit-lines)
+            ("C->" . mc/mark-next-like-this)
+            ("C-<" . mc/mark-previous-like-this)
+            ("C-c C-<" . mc/mark-all-like-this)))
+  #+END_SRC
+
+* Linum-Relative
+  #+BEGIN_SRC emacs-lisp
+    (use-package linum-relative
+      :ensure t
+      :config
+      (progn
+        (global-linum-mode t)
+        (linum-relative-toggle)))
+  #+END_SRC
+
+* Projectile
+  A project management tool
+  #+BEGIN_SRC emacs-lisp 
+    (use-package projectile
+      :ensure t
+      :config
+      (projectile-mode 1))
+
+    (use-package counsel-projectile
+      :ensure t
+      :config (counsel-projectile-mode t))
+  #+END_SRC
+
+* Flycheck
+  Syntax Checker
+  #+BEGIN_SRC emacs-lisp
+    (use-package flycheck
+      :ensure t
+      :init
+      (global-flycheck-mode t))
+  #+END_SRC
+* Misc
+  #+BEGIN_SRC emacs-lisp
+
+    (setq ;; makes killing/yanking interact with the clipboard
+     x-select-enable-clipboard t
+
+     ;; I'm actually not sure what this does but it's recommended?
+     x-select-enable-primary t
+     ;; Save clipboard strings into kill ring before replacing them.
+     ;; When one selects something in another program to paste it into Emacs,
+     ;; but kills something in Emacs before actually pasting it,
+     ;; this selection is gone unless this variable is non-nil
+     save-interprogram-paste-before-kill t
+
+     ;; Shows all options when running apropos. For more info,
+     ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Apropos.html
+     apropos-do-all t
+
+     ;; Mouse yank commands yank at point instead of at click.
+     mouse-yank-at-point t)
+
+  #+END_SRC
+
+
