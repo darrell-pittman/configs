@@ -20,8 +20,4 @@
 
 (org-babel-load-file (expand-file-name "~/.emacs.d/my-init.org"))
 
-(put 'dired-find-alternate-file 'disabled nil)
-
-(provide 'init)
-
 ;;; init.el ends here

@@ -1,3 +1,4 @@
+
 #+STARTUP: overview
 * Interface Tweeks
   #+BEGIN_SRC emacs-lisp
@@ -45,11 +46,10 @@
     (use-package ace-window
       :ensure t
       :init
-      (progn
         (global-set-key [remap other-window] 'ace-window)
         (custom-set-faces
          '(aw-leading-char-face
-           ((t (:inherit ace-jump-face-foreground :height 2.0)))))))
+           ((t (:inherit ace-jump-face-foreground :height 2.0))))))
    #+END_SRC
 
 * Swiper
@@ -63,10 +63,9 @@
       :diminish (ivy-mode)
       :bind (("C-x b" . ivy-switch-buffer))
       :config
-      (progn
         (ivy-mode 1)
         (setq ivy-use-virtual-buffers t)
-        (setq ivy-display-style 'fancy)))
+        (setq ivy-display-style 'fancy))
 
 
     (use-package swiper
@@ -77,11 +76,10 @@
              ("M-x" . counsel-M-x)
              ("C-x C-f" . counsel-find-file))
       :config
-      (progn
         (ivy-mode 1)
         (setq ivy-use-virtual-buffers t)
         (setq ivy-display-style 'fancy)
-        (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)))
+        (define-key read-expression-map (kbd "C-r") 'counsel-expression-history))
   #+END_SRC
 
 * Avy
@@ -117,9 +115,8 @@
     (use-package linum-relative
       :ensure t
       :config
-      (progn
         (global-linum-mode t)
-        (linum-relative-toggle)))
+        (linum-relative-toggle))
   #+END_SRC
 
 * Projectile
@@ -145,7 +142,6 @@
   #+END_SRC
 * Misc
   #+BEGIN_SRC emacs-lisp
-
     (setq ;; makes killing/yanking interact with the clipboard
      x-select-enable-clipboard t
 
@@ -162,8 +158,12 @@
      apropos-do-all t
 
      ;; Mouse yank commands yank at point instead of at click.
-     mouse-yank-at-point t)
+     mouse-yank-at-point t
 
+    )
+
+    ;;Enable a in dired
+    (put 'dired-find-alternate-file 'disabled nil)
   #+END_SRC
 
 
