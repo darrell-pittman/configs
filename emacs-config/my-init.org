@@ -1,4 +1,3 @@
-
 #+STARTUP: overview
 * Interface Tweeks
   #+BEGIN_SRC emacs-lisp
@@ -142,7 +141,8 @@
   #+END_SRC
 * Misc
   #+BEGIN_SRC emacs-lisp
-    (setq ;; makes killing/yanking interact with the clipboard
+    (setq-default
+     ;; makes killing/yanking interact with the clipboard
      x-select-enable-clipboard t
 
      ;; I'm actually not sure what this does but it's recommended?
@@ -165,5 +165,6 @@
     ;;Enable a in dired
     (put 'dired-find-alternate-file 'disabled nil)
   #+END_SRC
+
 
 
