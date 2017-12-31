@@ -175,4 +175,9 @@
   #+END_SRC
 
 
-
+* Modes
+** Javascript
+  Javascript setup
+  #+BEGIN_SRC emacs-lisp
+    (setq js-indent-level 2)
+  #+END_SRC
