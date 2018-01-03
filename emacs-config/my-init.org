@@ -219,7 +219,7 @@
     (setq-default ediff-split-window-function 'split-window-horizontally)
 
 
-    (defun my-create-shell (name cmds)
+    (defun my-create-shell (name &optional cmds)
       "Creates shell buffer named [name] and runs supplied bash [cmds]"
       (interactive)
       (if (not (get-buffer name))
@@ -227,10 +227,11 @@
             (switch-to-buffer (other-buffer buf))
             (switch-to-buffer-other-window buf)
             (rename-buffer name)
+            (if cmds 
             (with-current-buffer buf
               (let ((prc (get-buffer-process buf)))
                 (dolist (cmd cmds)
-                  (comint-send-string prc (concat cmd "\n"))))))))
+                  (comint-send-string prc (concat cmd "\n")))))))))
       
 
     (defun my-init-phms ()
@@ -239,6 +240,7 @@
       (let ((cur-buf (current-buffer)))
         (my-create-shell "es" '("cd ~/p30m/phmscli/appkit" "ember s"))
         (my-create-shell "rs" '("cd ~/p30m/phmsrails/phmsrails" "rails s"))
+        (my-create-shell "csl" '("cd ~/p30m"))
         (pop-to-buffer cur-buf)))
 
   #+END_SRC
