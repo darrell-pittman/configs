@@ -232,12 +232,14 @@
                 (dolist (cmd cmds)
                   (comint-send-string prc (concat cmd "\n"))))))))
       
-      
+
     (defun my-init-phms ()
       "Initializes emacs for phms. (eg: start rails and ember in shells)"
       (interactive)
-      (my-create-shell "es" '("cd ~/p30m/phmscli/appkit" "ember s"))
-      (my-create-shell "rs" '("cd ~/p30m/phmsrails/phmsrails" "rails s")))
+      (let ((cur-buf (current-buffer)))
+        (my-create-shell "es" '("cd ~/p30m/phmscli/appkit" "ember s"))
+        (my-create-shell "rs" '("cd ~/p30m/phmsrails/phmsrails" "rails s"))
+        (pop-to-buffer cur-buf)))
 
   #+END_SRC
 * Modes
