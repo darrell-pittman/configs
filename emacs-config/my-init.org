@@ -194,6 +194,18 @@
 
     ;;Enable a in dired
     (put 'dired-find-alternate-file 'disabled nil)
+
+    ;;<f3> to goto minibuffer
+    (defun switch-to-minibuffer-window ()
+      "switch to minibuffer window (if active)"
+      (interactive)
+      (when (active-minibuffer-window)
+        (select-frame-set-input-focus (window-frame (active-minibuffer-window)))
+        (select-window (active-minibuffer-window))))
+    (global-set-key (kbd "<f7>") 'switch-to-minibuffer-window)
+
+    (setq-default ediff-split-window-function 'split-window-horizontally)
+
   #+END_SRC
 * Modes
 ** Javascript
