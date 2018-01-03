@@ -161,8 +161,7 @@
     (use-package expand-region
       :ensure t
       :config
-      (global-set-key (kbd "C-=") 'er/expand-region)
-      (pending-delete-mode t))
+      (global-set-key (kbd "C-=") 'er/expand-region))
   #+END_SRC
 * Dumb Jump
    #+BEGIN_SRC emacs-lisp
@@ -244,6 +243,7 @@
         (my-create-shell "csl" '("cd ~/p30m"))
         (pop-to-buffer cur-buf)))
 
+    (delete-selection-mode t)
   #+END_SRC
 * Modes
 ** Javascript
