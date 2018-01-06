@@ -1,4 +1,8 @@
 #+STARTUP: overview
+* Init
+  #+BEGIN_SRC emacs-lisp
+    (add-to-list 'load-path "~/.emacs.d/customizations/")
+  #+END_SRC
 * Interface Tweeks
   #+BEGIN_SRC emacs-lisp
     (setq inhibit-startup-message t)
@@ -183,6 +187,7 @@
     #+END_SRC
 * Misc
   #+BEGIN_SRC emacs-lisp
+    (require 'column-marker)
     (setq-default
      ;; makes killing/yanking interact with the clipboard
      x-select-enable-clipboard t
@@ -255,4 +260,12 @@
   #+BEGIN_SRC emacs-lisp
     (use-package yaml-mode
       :ensure t)      
+  #+END_SRC
+** Shell
+  #+BEGIN_SRC emacs-lisp
+    (setq-default sh-basic-offset 2)
+  #+END_SRC
+** Find File
+  #+BEGIN_SRC emacs-lisp
+    (add-hook 'find-file-hook (lambda()(interactive)(column-marker-1 80)))
   #+END_SRC
