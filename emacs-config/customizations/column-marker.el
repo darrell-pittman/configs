@@ -18,7 +18,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; 
-;;; Commentary: 
+;;; Commentary:
 ;; 
 ;; Highlights the background at a given character column.
 ;; 
