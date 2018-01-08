@@ -188,6 +188,7 @@
 * Misc
   #+BEGIN_SRC emacs-lisp
     (require 'column-marker)
+    (autoload 'typing-of-emacs "typing" "The Typing Of Emacs, a game." t)
     (setq-default
      ;; makes killing/yanking interact with the clipboard
      x-select-enable-clipboard t
