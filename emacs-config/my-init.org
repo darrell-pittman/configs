@@ -235,7 +235,7 @@
       "Creates shell buffer named [name] and runs supplied bash [cmds]"
       (interactive)
       (if (not (get-buffer name))
-          (let ((buf (shell)))
+          (let ((buf (eshell)))
             (switch-to-buffer (other-buffer buf))
             (switch-to-buffer-other-window buf)
             (rename-buffer name)
@@ -243,7 +243,9 @@
             (with-current-buffer buf
               (let ((prc (get-buffer-process buf)))
                 (dolist (cmd cmds)
-                  (comint-send-string prc (concat cmd "\n")))))))))
+                  (eshell-return-to-prompt)
+                  (insert cmd)
+                  (eshell-send-input))))))))
       
 
     (defun my-init-phms ()
@@ -257,6 +259,9 @@
 
     (delete-selection-mode t)
     (setq projectile-globally-ignored-file-suffixes '("~"))
+    (require 'eshell)
+    (setq eshell-buffer-maximum-lines 2048)
+    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
   #+END_SRC
 * Modes
 ** Javascript
