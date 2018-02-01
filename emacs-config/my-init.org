@@ -254,14 +254,12 @@
       (let ((cur-buf (current-buffer)))
         (my-create-shell "es" '("cd ~/p30m/phmscli/appkit" "ember s"))
         (my-create-shell "rs" '("cd ~/p30m/phmsrails/phmsrails" "rails s"))
+        (my-create-shell "clk" '("cd ~/p30m/phmsrails/phmsrails/lib/modules" "bundle exec clockwork clock.rb"))
         (my-create-shell "csl" '("cd ~/p30m"))
         (pop-to-buffer cur-buf)))
 
     (delete-selection-mode t)
-    (setq projectile-globally-ignored-file-suffixes '("~"))
-    (require 'eshell)
-    (setq eshell-buffer-maximum-lines 2048)
-    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+    (setq projectile-globally-ignored-file-suffixes '("~" "#"))
   #+END_SRC
 * Modes
 ** Javascript
@@ -273,6 +271,12 @@
   #+BEGIN_SRC emacs-lisp
     (use-package yaml-mode
       :ensure t)      
+  #+END_SRC
+** Eshell
+  #+BEGIN_SRC emacs-lisp
+    (require 'eshell)
+    (setq eshell-buffer-maximum-lines 2048)
+    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
   #+END_SRC
 ** Shell
   #+BEGIN_SRC emacs-lisp
@@ -291,3 +295,24 @@
     (setq web-mode-code-indent-offset 2)
   #+END_SRC
  
+** Postgres
+ #+BEGIN_SRC emacs-lisp
+   (setq sql-connection-alist
+         '((local5454 (sql-product 'postgres)                 
+                      (sql-port 5454)
+                      (sql-server "localhost")
+                      (sql-user "postgres")
+                      (sql-database "phms"))
+           (local5432 (sql-product 'postgres)                 
+                      (sql-port 5432)
+                      (sql-server "localhost")
+                      (sql-user "postgres")
+                      (sql-database "phms"))))
+
+   (add-hook 'sql-interactive-mode-hook
+             (lambda ()
+               (toggle-truncate-lines t)
+               (setq 
+                comint-output-filter-functions 
+                'comint-truncate-buffer)))
+ #+END_SRC
