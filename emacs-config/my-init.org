@@ -231,7 +231,7 @@
     (setq-default ediff-split-window-function 'split-window-horizontally)
 
 
-    (defun my-create-shell (name &optional cmds)
+    (defun my/create-shell (name &optional cmds)
       "Creates shell buffer named [name] and runs supplied bash [cmds]"
       (interactive)
       (if (not (get-buffer name))
@@ -248,14 +248,14 @@
                   (eshell-send-input))))))))
       
 
-    (defun my-init-phms ()
+    (defun my/init-phms ()
       "Initializes emacs for phms. (eg: start rails and ember in shells)"
       (interactive)
       (let ((cur-buf (current-buffer)))
-        (my-create-shell "es" '("cd ~/p30m/phmscli/appkit" "ember s"))
-        (my-create-shell "rs" '("cd ~/p30m/phmsrails/phmsrails" "rails s"))
-        (my-create-shell "clk" '("cd ~/p30m/phmsrails/phmsrails/lib/modules" "bundle exec clockwork clock.rb"))
-        (my-create-shell "csl" '("cd ~/p30m"))
+        (my/create-shell "es" '("cd ~/p30m/phmscli/appkit" "ember s"))
+        (my/create-shell "rs" '("cd ~/p30m/phmsrails/phmsrails" "rails s"))
+        (my/create-shell "clk" '("cd ~/p30m/phmsrails/phmsrails/lib/modules" "bundle exec clockwork clock.rb"))
+        (my/create-shell "csl" '("cd ~/p30m"))
         (pop-to-buffer cur-buf)))
 
     (delete-selection-mode t)
@@ -276,7 +276,20 @@
   #+BEGIN_SRC emacs-lisp
     (require 'eshell)
     (setq eshell-buffer-maximum-lines 2048)
-    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+    (defun my/truncate-eshell-buffers ()
+      "Truncates all eshell buffers"
+      (interactive)
+      (save-current-buffer
+        (dolist (buffer (buffer-list t))
+          (set-buffer buffer)
+          (when (eq major-mode 'eshell-mode)
+            (eshell-truncate-buffer)))))
+
+    ;; After being idle for 5 seconds, truncate all the eshell-buffers if
+    ;; needed. If this needs to be canceled, you can run `(cancel-timer
+    ;; my/eshell-truncate-timer)'
+    (setq my/eshell-truncate-timer
+          (run-with-idle-timer 5 t #'my/truncate-eshell-buffers))
   #+END_SRC
 ** Shell
   #+BEGIN_SRC emacs-lisp
@@ -316,3 +329,4 @@
                 comint-output-filter-functions 
                 'comint-truncate-buffer)))
  #+END_SRC
+   
