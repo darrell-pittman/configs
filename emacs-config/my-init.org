@@ -221,7 +221,7 @@
 
     ;;<f3> to goto minibuffer
     (defun switch-to-minibuffer-window ()
-      "switch to minibuffer window (if active)"
+      "Switch to minibuffer window (if active)."
       (interactive)
       (when (active-minibuffer-window)
         (select-frame-set-input-focus (window-frame (active-minibuffer-window)))
@@ -230,42 +230,76 @@
 
     (setq-default ediff-split-window-function 'split-window-horizontally)
 
+    (setq _my/shells
+      #s(hash-table size 4 test equal data (
+        "es" ("cd ~/p30m/phmscli/appkit" "ember s")
+        "rs" ("cd ~/p30m/phmsrails/phmsrails" "rails s")
+        "clk" ("cd ~/p30m/phmsrails/phmsrails/lib/modules" "bundle exec clockwork clock.rb")
+        "csl" ("cd ~/p30m"))))
 
-    (defun my/create-shell (name &optional cmds)
-      "Creates shell buffer named [name] and runs supplied bash [cmds]"
+    (defun _my/create-shell (name)
+      "Create shell buffer named [NAME] and run supplied bash [CMDS]."
       (interactive)
       (if (not (get-buffer name))
-          (let ((buf (eshell)))
+          (let ((buf (eshell))
+                (cmds (gethash name _my/shells)))
             (switch-to-buffer (other-buffer buf))
             (switch-to-buffer-other-window buf)
             (rename-buffer name)
-            (if cmds 
-            (with-current-buffer buf
-              (let ((prc (get-buffer-process buf)))
-                (dolist (cmd cmds)
-                  (eshell-return-to-prompt)
-                  (insert cmd)
-                  (eshell-send-input))))))))      
+            (if cmds
+                (with-current-buffer buf
+                  (let ((prc (get-buffer-process buf)))
+                    (dolist (cmd cmds)
+                      (eshell-return-to-prompt)
+                      (insert cmd)
+                      (eshell-send-input))))))))
 
     (defun my/init-phms ()
       "Initialize EMACS for phms.  (eg: start rails and ember in shells)."
       (interactive)
       (let ((cur-buf (current-buffer)))
-        (my/create-shell "es" '("cd ~/p30m/phmscli/appkit" "ember s"))
-        (my/create-shell "rs" '("cd ~/p30m/phmsrails/phmsrails" "rails s"))
-        (my/create-shell "clk" '("cd ~/p30m/phmsrails/phmsrails/lib/modules" "bundle exec clockwork clock.rb"))
-        (my/create-shell "csl" '("cd ~/p30m"))
+        (dolist (buf-name (hash-table-keys _my/shells))
+          (_my/create-shell buf-name))
         (pop-to-buffer cur-buf)))
+
+    (defun _my/kill-shells (names)
+      "Kill shells listed in NAMES."
+      (interactive)
+      (let* ((filtered (seq-filter (lambda (buf)
+                                     (seq-contains names (buffer-name buf)))
+                                   (buffer-list))))
+        (dolist (buf filtered)
+          (kill-buffer buf))))
+      
 
     (defun my/kill-phms ()
       "Kill rails, ember, clk and csl buffers."
       (interactive)
-      (let* ((to-delete '("es" "rs" "clk" "csl"))
-             (filtered (seq-filter (lambda (buf)
-                                     (seq-contains to-delete (buffer-name buf)))
-                                   (buffer-list))))
-        (dolist (buf filtered)
-          (kill-buffer buf))))
+      (_my/kill-shells (hash-table-keys _my/shells)))
+
+    (defun _my/restart-shell (name)
+      "Restart shell defined under NAME in _my/shells."
+      (interactive)
+      (let ((cur-buf (current-buffer)))
+        (_my/kill-shells `(,name))
+        (_my/create-shell name)
+        (pop-to-buffer cur-buf)))
+
+
+    (defun my/restart-rails ()
+      "Restart rails."
+      (interactive)
+      (_my/restart-shell "rs"))
+
+    (defun my/restart-ember ()
+      "Restart Ember."
+      (interactive)
+      (_my/restart-shell "es"))
+
+    (defun my/restart-clockwork ()
+      "Restart Clockwork."
+      (interactive)
+      (_my/restart-shell "clk"))
 
     (delete-selection-mode t)
     (setq projectile-globally-ignored-file-suffixes '("~" "#"))
@@ -285,7 +319,7 @@
   #+BEGIN_SRC emacs-lisp
     (require 'eshell)
     (setq eshell-buffer-maximum-lines 2048)
-    (defun my/truncate-eshell-buffers ()
+    (defun _my/truncate-eshell-buffers ()
       "Truncates all eshell buffers"
       (interactive)
       (save-current-buffer
@@ -298,7 +332,7 @@
     ;; needed. If this needs to be canceled, you can run `(cancel-timer
     ;; my/eshell-truncate-timer)'
     (setq my/eshell-truncate-timer
-          (run-with-idle-timer 5 t #'my/truncate-eshell-buffers))
+          (run-with-idle-timer 5 t #'_my/truncate-eshell-buffers))
   #+END_SRC
 ** Shell
   #+BEGIN_SRC emacs-lisp
