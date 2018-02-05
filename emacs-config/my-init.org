@@ -245,11 +245,10 @@
                 (dolist (cmd cmds)
                   (eshell-return-to-prompt)
                   (insert cmd)
-                  (eshell-send-input))))))))
-      
+                  (eshell-send-input))))))))      
 
     (defun my/init-phms ()
-      "Initializes emacs for phms. (eg: start rails and ember in shells)"
+      "Initialize EMACS for phms.  (eg: start rails and ember in shells)."
       (interactive)
       (let ((cur-buf (current-buffer)))
         (my/create-shell "es" '("cd ~/p30m/phmscli/appkit" "ember s"))
@@ -257,6 +256,16 @@
         (my/create-shell "clk" '("cd ~/p30m/phmsrails/phmsrails/lib/modules" "bundle exec clockwork clock.rb"))
         (my/create-shell "csl" '("cd ~/p30m"))
         (pop-to-buffer cur-buf)))
+
+    (defun my/kill-phms ()
+      "Kill rails, ember, clk and csl buffers."
+      (interactive)
+      (let* ((to-delete '("es" "rs" "clk" "csl"))
+             (filtered (seq-filter (lambda (buf)
+                                     (seq-contains to-delete (buffer-name buf)))
+                                   (buffer-list))))
+        (dolist (buf filtered)
+          (kill-buffer buf))))
 
     (delete-selection-mode t)
     (setq projectile-globally-ignored-file-suffixes '("~" "#"))
