@@ -319,20 +319,23 @@
   #+BEGIN_SRC emacs-lisp
     (require 'eshell)
     (setq eshell-buffer-maximum-lines 2048)
-    (defun _my/truncate-eshell-buffers ()
-      "Truncates all eshell buffers"
+    (defun _my/truncate-shell-buffers ()
+      "Truncate all eshell and sql buffers."
       (interactive)
       (save-current-buffer
         (dolist (buffer (buffer-list t))
           (set-buffer buffer)
           (when (eq major-mode 'eshell-mode)
-            (eshell-truncate-buffer)))))
+            (eshell-truncate-buffer))
+          (when (eq major-mode 'sql-interactive-mode)
+            (comint-truncate-buffer)))))
 
-    ;; After being idle for 5 seconds, truncate all the eshell-buffers if
+    ;; After being idle for 5 seconds, truncate all the eshell-buffers
+    ;; and sql-interactive-buffers if
     ;; needed. If this needs to be canceled, you can run `(cancel-timer
-    ;; my/eshell-truncate-timer)'
-    (setq my/eshell-truncate-timer
-          (run-with-idle-timer 5 t #'_my/truncate-eshell-buffers))
+    ;; my/shell-truncate-timer)'
+    (setq my/shell-truncate-timer
+          (run-with-idle-timer 5 t #'_my/truncate-shell-buffers))
   #+END_SRC
 ** Shell
   #+BEGIN_SRC emacs-lisp
@@ -364,12 +367,5 @@
                       (sql-server "localhost")
                       (sql-user "postgres")
                       (sql-database "phms"))))
-
-   (add-hook 'sql-interactive-mode-hook
-             (lambda ()
-               (toggle-truncate-lines t)
-               (setq 
-                comint-output-filter-functions 
-                'comint-truncate-buffer)))
  #+END_SRC
    
