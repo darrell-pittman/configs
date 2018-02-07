@@ -256,7 +256,7 @@
         (pop-to-buffer cur-buf)))
 
     (delete-selection-mode t)
-    (setq projectile-globally-ignored-file-suffixes '("~"))
+    (setq projectile-globally-ignored-file-suffixes '("~" "#"))
   #+END_SRC
 * Modes
 ** Javascript
