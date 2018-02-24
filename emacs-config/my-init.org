@@ -368,4 +368,8 @@
                       (sql-user "postgres")
                       (sql-database "phms"))))
  #+END_SRC
-   
+** CSS
+ #+BEGIN_SRC emacs-lisp
+   (setq css-indent-offset 2)
+ #+END_SRC   
+
