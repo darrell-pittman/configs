@@ -402,4 +402,8 @@
        
        (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
  #+END_SRC
-   
+** CSS
+ #+BEGIN_SRC emacs-lisp
+   (setq css-indent-offset 2)
+ #+END_SRC   
+
