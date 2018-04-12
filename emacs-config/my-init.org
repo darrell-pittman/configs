@@ -304,18 +304,18 @@
     (delete-selection-mode t)
     (setq projectile-globally-ignored-file-suffixes '("~" "#"))
 
-    ;;(setq backup-directory-alist
-    ;;          `((".*" . ,temporary-file-directory)))
-    ;;(setq auto-save-file-name-transforms
-    ;;      `((".*" ,temporary-file-directory t))) 
+    (setq backup-directory-alist
+              `((".*" . ,temporary-file-directory)))
+    (setq auto-save-file-name-transforms
+          `((".*" ,temporary-file-directory t))) 
     (setq create-lockfiles nil)
-    (setq
-     backup-directory-alist '(("." . "~/.emacs.d/backup"))
-     backup-by-copying t
-     version-control t
-     delete-old-versions t
-     kept-new-versions 20
-     kept-old-versions 5)
+    ;;(setq
+    ;; backup-directory-alist '(("." . "~/.emacs.d/backup"))
+    ;; backup-by-copying t
+    ;; version-control t
+    ;; delete-old-versions t
+    ;; kept-new-versions 20
+    ;; kept-old-versions 5)
                                    
   #+END_SRC
 * Modes
@@ -323,6 +323,9 @@
   Javascript setup
   #+BEGIN_SRC emacs-lisp
     (setq js-indent-level 2)
+    (setq js-mode-hook
+          '(lambda () (progn
+                        (set-variable 'indent-tabs-mode nil))))
   #+END_SRC
 ** Yaml
   #+BEGIN_SRC emacs-lisp
