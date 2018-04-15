@@ -304,14 +304,18 @@
     (delete-selection-mode t)
     (setq projectile-globally-ignored-file-suffixes '("~" "#"))
 
-    (setq
-     backup-directory-alist '(("." . "~/.emacs.d/backup"))
-     backup-by-copying t
-     version-control t
-     delete-old-versions t
-     kept-new-versions 20
-     kept-old-versions 5)
-
+    (setq backup-directory-alist
+              `((".*" . ,temporary-file-directory)))
+    (setq auto-save-file-name-transforms
+          `((".*" ,temporary-file-directory t))) 
+    (setq create-lockfiles nil)
+    ;;(setq
+    ;; backup-directory-alist '(("." . "~/.emacs.d/backup"))
+    ;; backup-by-copying t
+    ;; version-control t
+    ;; delete-old-versions t
+    ;; kept-new-versions 20
+    ;; kept-old-versions 5)
     (setenv "PATH" (concat "~/.nix-profile/bin:" (getenv "PATH")))
     (setq exec-path (append '("~/.nix-profile/bin") exec-path))
   #+END_SRC
@@ -320,6 +324,9 @@
   Javascript setup
   #+BEGIN_SRC emacs-lisp
     (setq js-indent-level 2)
+    (setq js-mode-hook
+          '(lambda () (progn
+                        (set-variable 'indent-tabs-mode nil))))
   #+END_SRC
 ** Yaml
   #+BEGIN_SRC emacs-lisp
@@ -367,17 +374,37 @@
  
 ** Postgres
  #+BEGIN_SRC emacs-lisp
-   (setq sql-connection-alist
-         '((local5454 (sql-product 'postgres)                 
-                      (sql-port 5454)
-                      (sql-server "localhost")
-                      (sql-user "postgres")
-                      (sql-database "phms"))
-           (local5432 (sql-product 'postgres)                 
-                      (sql-port 5432)
-                      (sql-server "localhost")
-                      (sql-user "postgres")
-                      (sql-database "phms"))))
+      (setq sql-connection-alist
+            '((local5454 (sql-product 'postgres)                 
+                         (sql-port 5454)
+                         (sql-server "localhost")
+                         (sql-user "postgres")
+                         (sql-database "phms"))
+              (local5432 (sql-product 'postgres)                 
+                         (sql-port 5432)
+                         (sql-server "localhost")
+                         (sql-user "postgres")
+                         (sql-database "phms"))
+              (saskdev (sql-product 'postgres)                 
+                         (sql-port 5432)
+                         (sql-server "sask-dev-db.co5gntiywuya.ca-central-1.rds.amazonaws.com")
+                         (sql-user "postgres")
+                         (sql-database "phms"))))
+
+      (defun my-sql-save-history-hook ()
+          (let ((lval 'sql-input-ring-file-name)
+                (rval 'sql-product))
+            (if (symbol-value rval)
+                (let ((filename 
+                       (concat "~/.emacs.d/sql/"
+                               (symbol-name (symbol-value rval))
+                               "-history.sql")))
+                  (set (make-local-variable lval) filename))
+              (error
+               (format "SQL history will not be saved because %s is nil"
+                       (symbol-name rval))))))
+       
+       (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
  #+END_SRC
 ** CSS
  #+BEGIN_SRC emacs-lisp
