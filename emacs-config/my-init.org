@@ -318,6 +318,9 @@
     ;; kept-old-versions 5)
     (setenv "PATH" (concat "~/.nix-profile/bin:" (getenv "PATH")))
     (setq exec-path (append '("~/.nix-profile/bin") exec-path))
+
+    (put 'narrow-to-region 'disabled nil)
+
   #+END_SRC
 * Modes
 ** Javascript
