@@ -1,0 +1,416 @@
+#+STARTUP: overview
+* Init
+  #+BEGIN_SRC emacs-lisp
+    (add-to-list 'load-path "~/.emacs.d/customizations/")
+  #+END_SRC
+* Interface Tweeks
+  #+BEGIN_SRC emacs-lisp
+    (setq inhibit-startup-message t)
+    (tool-bar-mode -1)
+    (fset 'yes-or-no-p 'y-or-n-p)
+    (global-set-key (kbd "<f5>") 'revert-buffer)
+    (use-package solarized-theme
+      :ensure t
+      :config (load-theme 'solarized-light t))
+    (global-hl-line-mode t)
+  #+END_SRC
+
+* Try
+  Allows trying packages
+  #+BEGIN_SRC emacs-lisp
+    (use-package try
+      :ensure t)
+  #+END_SRC
+
+* Which Key
+  Provides help for commands
+  #+BEGIN_SRC emacs-lisp
+    (use-package which-key
+      :ensure t
+      :config (which-key-mode))
+  #+END_SRC
+
+* ibuffer
+  Use ibuffer for list-buffers
+  #+BEGIN_SRC emacs-lisp
+    (defalias 'list-buffers 'ibuffer)
+  #+END_SRC
+
+* Org-Bullets
+  Adds formatting to .org files
+  #+BEGIN_SRC emacs-lisp
+    (use-package org-bullets
+      :ensure t
+      :config (add-hook 'org-mode-hook 'org-bullets-mode))
+  #+END_SRC
+
+* Ace-window
+  Adds numbers for selecting windows
+  #+BEGIN_SRC emacs-lisp
+    (use-package ace-window
+      :ensure t
+      :init
+        (global-set-key [remap other-window] 'ace-window)
+        (custom-set-faces
+         '(aw-leading-char-face
+           ((t (:inherit ace-jump-face-foreground :height 2.0))))))
+   #+END_SRC
+
+* Swiper
+  Used for searches
+  #+BEGIN_SRC emacs-lisp
+    (use-package counsel
+      :ensure t
+      :bind (("M-y" . counsel-yank-pop)))
+
+    (use-package ivy
+      :ensure t
+      :diminish (ivy-mode)
+      :bind (("C-x b" . ivy-switch-buffer))
+      :config
+        (ivy-mode 1)
+        (setq ivy-use-virtual-buffers t)
+        (setq ivy-display-style 'fancy))
+
+
+    (use-package swiper
+      :ensure try
+      :bind (("C-s" . swiper)
+             ("C-r" . swiper)
+             ("C-c C-r" . ivy-resume)
+             ("M-x" . counsel-M-x)
+             ("C-x C-f" . counsel-find-file))
+      :config
+        (ivy-mode 1)
+        (setq ivy-use-virtual-buffers t)
+        (setq ivy-display-style 'fancy)
+        (define-key read-expression-map (kbd "C-r") 'counsel-expression-history))
+  #+END_SRC
+
+* Avy
+  Used for quick nav based on indexed highlighting
+  #+BEGIN_SRC emacs-lisp
+    (use-package avy
+      :ensure t
+      :bind("M-s" . avy-goto-char))
+  #+END_SRC
+
+* Company
+  Auto-lookup
+  #+BEGIN_SRC emacs-lisp
+    (use-package company
+      :ensure t
+      :config
+      (global-company-mode))
+  #+END_SRC
+
+* Multi-Cursors
+  #+BEGIN_SRC emacs-lisp
+    (use-package multiple-cursors
+      :ensure t
+      :bind(
+            ("C-S-c C-S-c" . mc/edit-lines)
+            ("C->" . mc/mark-next-like-this)
+            ("C-<" . mc/mark-previous-like-this)
+            ("C-c C-<" . mc/mark-all-like-this)))
+  #+END_SRC
+
+* Linum-Relative
+  #+BEGIN_SRC emacs-lisp
+    (use-package linum-relative
+      :ensure t
+      :config
+        (global-linum-mode t)
+        (linum-relative-toggle))
+  #+END_SRC
+
+* Projectile
+  A project management tool
+  #+BEGIN_SRC emacs-lisp 
+    (use-package projectile
+      :ensure t
+      :config
+      (projectile-mode 1))
+
+    (use-package counsel-projectile
+      :ensure t
+      :config (counsel-projectile-mode t))
+  #+END_SRC
+
+* Flycheck
+  Syntax Checker
+  #+BEGIN_SRC emacs-lisp
+    (use-package flycheck
+      :ensure t
+      :init
+      (global-flycheck-mode t))
+  #+END_SRC
+* Magit
+  GIT Porcelain
+  #+BEGIN_SRC emacs-lisp
+    (use-package magit
+      :ensure t
+      :config
+      (global-set-key (kbd "C-x g") 'magit-status))
+  #+END_SRC
+* Undo-Tree
+  #+BEGIN_SRC emacs-lisp
+    (use-package undo-tree
+      :ensure t
+      :init
+      (global-undo-tree-mode))
+  #+END_SRC
+* Expand Region
+  #+BEGIN_SRC emacs-lisp
+    (use-package expand-region
+      :ensure t
+      :config
+      (global-set-key (kbd "C-=") 'er/expand-region))
+  #+END_SRC
+* Dumb Jump
+   #+BEGIN_SRC emacs-lisp
+     (use-package dumb-jump
+       :bind (("M-g o" . dumb-jump-go-other-window)
+              ("M-g j" . dumb-jump-go)
+              ("M-g b" . dumb-jump-back)      
+              ("M-g i" . dumb-jump-go-prompt)
+              ("M-g x" . dumb-jump-go-prefer-external)
+              ("M-g z" . dumb-jump-go-prefer-external-other-window))
+       :config (setq dumb-jump-selector 'ivy)
+       :ensure t)
+   #+END_SRC
+* Clojure
+** Cider
+    #+BEGIN_SRC emacs-lisp
+      (use-package cider
+        :ensure t
+        :config
+        (setq cider-cljs-lein-repl
+              "(do (require 'figwheel-sidecar.repl-api)
+                 (figwheel-sidecar.repl-api/start-figwheel!)
+                 (figwheel-sidecar.repl-api/cljs-repl))"))
+    #+END_SRC
+* Misc
+  #+BEGIN_SRC emacs-lisp
+    (require 'column-marker)
+    (show-paren-mode)
+    (autoload 'typing-of-emacs "typing" "The Typing Of Emacs, a game." t)
+    (setq-default
+     ;; makes killing/yanking interact with the clipboard
+     x-select-enable-clipboard t
+
+     ;; I'm actually not sure what this does but it's recommended?
+     x-select-enable-primary t
+     ;; Save clipboard strings into kill ring before replacing them.
+     ;; When one selects something in another program to paste it into Emacs,
+     ;; but kills something in Emacs before actually pasting it,
+     ;; this selection is gone unless this variable is non-nil
+     save-interprogram-paste-before-kill t
+
+     ;; Shows all options when running apropos. For more info,
+     ;; https://www.gnu.org/software/emacs/manual/html_node/emacs/Apropos.html
+     apropos-do-all t
+
+     ;; Mouse yank commands yank at point instead of at click.
+     mouse-yank-at-point t
+
+    )
+
+    ;;Enable a in dired
+    (put 'dired-find-alternate-file 'disabled nil)
+
+    ;;<f3> to goto minibuffer
+    (defun switch-to-minibuffer-window ()
+      "Switch to minibuffer window (if active)."
+      (interactive)
+      (when (active-minibuffer-window)
+        (select-frame-set-input-focus (window-frame (active-minibuffer-window)))
+        (select-window (active-minibuffer-window))))
+    (global-set-key (kbd "<f7>") 'switch-to-minibuffer-window)
+
+    (setq-default ediff-split-window-function 'split-window-horizontally)
+
+    (setq _my/shells
+      #s(hash-table size 4 test equal data (
+        "es" ("cd ~/p30m/phmscli/appkit" "ember s")
+        "rs" ("cd ~/p30m/phmsrails/phmsrails" "rails s")
+        "clk" ("cd ~/p30m/phmsrails/phmsrails/lib/modules" "bundle exec clockwork clock.rb")
+        "csl" ("cd ~/p30m"))))
+
+    (defun _my/create-shell (name)
+      "Create shell buffer named [NAME] and run supplied bash [CMDS]."
+      (interactive)
+      (if (not (get-buffer name))
+          (let ((buf (eshell))
+                (cmds (gethash name _my/shells)))
+            (switch-to-buffer (other-buffer buf))
+            (switch-to-buffer-other-window buf)
+            (rename-buffer name)
+            (if cmds
+                (with-current-buffer buf
+                  (let ((prc (get-buffer-process buf)))
+                    (dolist (cmd cmds)
+                      (eshell-return-to-prompt)
+                      (insert cmd)
+                      (eshell-send-input))))))))
+
+    (defun my/init-phms ()
+      "Initialize EMACS for phms.  (eg: start rails and ember in shells)."
+      (interactive)
+      (let ((cur-buf (current-buffer)))
+        (dolist (buf-name (hash-table-keys _my/shells))
+          (_my/create-shell buf-name))
+        (pop-to-buffer cur-buf)))
+
+    (defun _my/kill-shells (names)
+      "Kill shells listed in NAMES."
+      (interactive)
+      (let* ((filtered (seq-filter (lambda (buf)
+                                     (seq-contains names (buffer-name buf)))
+                                   (buffer-list))))
+        (dolist (buf filtered)
+          (kill-buffer buf))))
+      
+
+    (defun my/kill-phms ()
+      "Kill rails, ember, clk and csl buffers."
+      (interactive)
+      (_my/kill-shells (hash-table-keys _my/shells)))
+
+    (defun _my/restart-shell (name)
+      "Restart shell defined under NAME in _my/shells."
+      (interactive)
+      (let ((cur-buf (current-buffer)))
+        (_my/kill-shells `(,name))
+        (_my/create-shell name)
+        (pop-to-buffer cur-buf)))
+
+
+    (defun my/restart-rails ()
+      "Restart rails."
+      (interactive)
+      (_my/restart-shell "rs"))
+
+    (defun my/restart-ember ()
+      "Restart Ember."
+      (interactive)
+      (_my/restart-shell "es"))
+
+    (defun my/restart-clockwork ()
+      "Restart Clockwork."
+      (interactive)
+      (_my/restart-shell "clk"))
+
+    (delete-selection-mode t)
+    (setq projectile-globally-ignored-file-suffixes '("~" "#"))
+
+    (setq backup-directory-alist
+              `((".*" . ,temporary-file-directory)))
+    (setq auto-save-file-name-transforms
+          `((".*" ,temporary-file-directory t))) 
+    (setq create-lockfiles nil)
+    ;;(setq
+    ;; backup-directory-alist '(("." . "~/.emacs.d/backup"))
+    ;; backup-by-copying t
+    ;; version-control t
+    ;; delete-old-versions t
+    ;; kept-new-versions 20
+    ;; kept-old-versions 5)
+    (setenv "PATH" (concat "~/.nix-profile/bin:" (getenv "PATH")))
+    (setq exec-path (append '("~/.nix-profile/bin") exec-path))
+
+    (put 'narrow-to-region 'disabled nil)
+
+  #+END_SRC
+* Modes
+** Javascript
+  Javascript setup
+  #+BEGIN_SRC emacs-lisp
+    (setq js-indent-level 2)
+    (setq js-mode-hook
+          '(lambda () (progn
+                        (set-variable 'indent-tabs-mode nil))))
+  #+END_SRC
+** Yaml
+  #+BEGIN_SRC emacs-lisp
+    (use-package yaml-mode
+      :ensure t)      
+  #+END_SRC
+** Eshell
+  #+BEGIN_SRC emacs-lisp
+    (require 'eshell)
+    (setq eshell-buffer-maximum-lines 2048)
+    (defun _my/truncate-shell-buffers ()
+      "Truncate all eshell and sql buffers."
+      (interactive)
+      (save-current-buffer
+        (dolist (buffer (buffer-list t))
+          (set-buffer buffer)
+          (when (eq major-mode 'eshell-mode)
+            (eshell-truncate-buffer))
+          (when (eq major-mode 'sql-interactive-mode)
+            (comint-truncate-buffer)))))
+
+    ;; After being idle for 5 seconds, truncate all the eshell-buffers
+    ;; and sql-interactive-buffers if
+    ;; needed. If this needs to be canceled, you can run `(cancel-timer
+    ;; my/shell-truncate-timer)'
+    (setq my/shell-truncate-timer
+          (run-with-idle-timer 5 t #'_my/truncate-shell-buffers))
+  #+END_SRC
+** Shell
+  #+BEGIN_SRC emacs-lisp
+    (setq-default sh-basic-offset 2)
+  #+END_SRC
+** Find File
+  #+BEGIN_SRC emacs-lisp
+    (add-hook 'find-file-hook (lambda()(interactive)(column-marker-1 80)))
+  #+END_SRC
+** Web-Mode
+  #+BEGIN_SRC emacs-lisp
+    (require 'web-mode)
+    (add-to-list 'auto-mode-alist '("\\.hbs\\'" . web-mode))
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-css-indent-offset 2)
+    (setq web-mode-code-indent-offset 2)
+  #+END_SRC
+ 
+** Postgres
+ #+BEGIN_SRC emacs-lisp
+      (setq sql-connection-alist
+            '((local5454 (sql-product 'postgres)                 
+                         (sql-port 5454)
+                         (sql-server "localhost")
+                         (sql-user "postgres")
+                         (sql-database "phms"))
+              (local5432 (sql-product 'postgres)                 
+                         (sql-port 5432)
+                         (sql-server "localhost")
+                         (sql-user "postgres")
+                         (sql-database "phms"))
+              (saskdev (sql-product 'postgres)                 
+                         (sql-port 5432)
+                         (sql-server "sask-dev-db.co5gntiywuya.ca-central-1.rds.amazonaws.com")
+                         (sql-user "postgres")
+                         (sql-database "phms"))))
+
+      (defun my-sql-save-history-hook ()
+          (let ((lval 'sql-input-ring-file-name)
+                (rval 'sql-product))
+            (if (symbol-value rval)
+                (let ((filename 
+                       (concat "~/.emacs.d/sql/"
+                               (symbol-name (symbol-value rval))
+                               "-history.sql")))
+                  (set (make-local-variable lval) filename))
+              (error
+               (format "SQL history will not be saved because %s is nil"
+                       (symbol-name rval))))))
+       
+       (add-hook 'sql-interactive-mode-hook 'my-sql-save-history-hook)
+ #+END_SRC
+** CSS
+ #+BEGIN_SRC emacs-lisp
+   (setq css-indent-offset 2)
+ #+END_SRC   
+
