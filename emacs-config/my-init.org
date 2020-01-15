@@ -35,7 +35,7 @@
     (defun wgc/get-default-font ()
       (cond
        ((eq system-type 'windows-nt) "Consolas-13")
-       ((eq system-type 'gnu/linux) "Ubuntu Mono-17")))
+       ((eq system-type 'gnu/linux) "DejaVu Sans Mono-15")))
 
     (add-to-list 'default-frame-alist `(font . ,(wgc/get-default-font)))
 
