@@ -60,11 +60,18 @@ parse_git_branch() {
      git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
 }
 
+display_user() {
+    if [ "$USER" = "darrell" ]; then
+	echo $'\u24b9'
+    else
+	echo "$USER@$HOSTNAME"
+    fi
+}
 
 if [ "$color_prompt" = yes ]; then
     #PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
     #PS1=$'\u24b9 '"\[\033[93m\]\w\[\033[95m\]\$(parse_git_branch)\[\033[00m\]\n:: "
-    PS1=$'\u256d\u2500 '"\[\033[93m\]\w\[\033[92m\]\$(parse_git_branch)\[\033[00m\]\n"$'\u2570\u2500 $ '
+    PS1=$'\u256d\u2500 $(display_user) '"\[\033[93m\]\w\[\033[92m\]\$(parse_git_branch)\[\033[00m\]\n"$'\u2570\u2500 $ '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
