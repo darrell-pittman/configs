@@ -1,3 +1,4 @@
+#+STARTUP: overview
 * Sample init.el
   Below is a sample init.el that initializes emacs and loads this my-init.org file:
 
