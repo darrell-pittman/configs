@@ -18,8 +18,10 @@
 * Init
   #+BEGIN_SRC emacs-lisp
     (add-to-list 'load-path "~/.emacs.d/customizations/")
-  #+END_SRC
 
+    ; This tls setting required if emcs version >= 26.3
+    (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+  #+END_SRC
 * Interface Tweaks
   #+BEGIN_SRC emacs-lisp
     (setq inhibit-startup-message t)
@@ -117,20 +119,20 @@
 * Auto-Complete
   This package will not be used once I configure company
   #+BEGIN_SRC emacs-lisp
-  (use-package auto-complete
-    :ensure t
-    :init
-    (progn
-      (ac-config-default)
-      (global-auto-complete-mode t)
-      ))
+  ;(use-package auto-complete
+  ;  :ensure t
+  ;  :init
+  ;  (progn
+  ;    (ac-config-default)
+  ;    (global-auto-complete-mode t)
+  ;    ))
   #+END_SRC
 * Undo-Tree
   #+BEGIN_SRC emacs-lisp
-  (use-package undo-tree
-    :ensure t
-    :init
-    (global-undo-tree-mode))
+    (use-package undo-tree
+      :ensure t
+      :init
+      (global-undo-tree-mode))
   #+END_SRC
 * Misc
   #+BEGIN_SRC emacs-lisp
