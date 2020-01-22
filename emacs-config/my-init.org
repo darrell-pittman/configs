@@ -142,7 +142,4 @@
     (setq auto-save-file-name-transforms
 	  `((".*" ,temporary-file-directory t))) 
     (setq create-lockfiles nil)
-    
-    ; Lastly, server start for client connections
-    (server-start)
   #+END_SRC
