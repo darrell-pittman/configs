@@ -21,6 +21,7 @@
 
     ; This tls setting required if emcs version >= 26.3
     (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
   #+END_SRC
 * Interface Tweaks
   #+BEGIN_SRC emacs-lisp
@@ -136,9 +137,12 @@
   #+END_SRC
 * Misc
   #+BEGIN_SRC emacs-lisp
-  (setq backup-directory-alist
-	    `((".*" . ,temporary-file-directory)))
-  (setq auto-save-file-name-transforms
-	`((".*" ,temporary-file-directory t))) 
-  (setq create-lockfiles nil)
+    (setq backup-directory-alist
+	      `((".*" . ,temporary-file-directory)))
+    (setq auto-save-file-name-transforms
+	  `((".*" ,temporary-file-directory t))) 
+    (setq create-lockfiles nil)
+    
+    ; Lastly, server start for client connections
+    (server-start)
   #+END_SRC
