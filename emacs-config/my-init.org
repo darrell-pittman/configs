@@ -19,8 +19,13 @@
   #+BEGIN_SRC emacs-lisp
     (add-to-list 'load-path "~/.emacs.d/customizations/")
 
-    ; This tls setting required if emcs version >= 26.3
+    ;; This tls setting required if emcs version >= 26.3
     (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
+    (defun load-if-exists (f)
+      ""
+      (if (file-readable-p f)
+	  (load-file f)))
 
   #+END_SRC
 * Interface Tweaks
@@ -149,6 +154,10 @@
 
     (use-package iedit
       :ensure t)
+  #+END_SRC
+* Load Other Files
+  #+BEGIN_SRC emacs-lisp
+    (load-if-exists "~/configs/emacs-config/my-private.el")
   #+END_SRC
 * Misc
   #+BEGIN_SRC emacs-lisp
