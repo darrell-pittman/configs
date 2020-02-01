@@ -23,8 +23,8 @@
     (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
     (defun load-if-exists (f)
-      ""
-      (if (file-readable-p f)
+      "load the elisp file only if it exists and is readable"
+      (when (file-readable-p f)
 	  (load-file f)))
 
   #+END_SRC
