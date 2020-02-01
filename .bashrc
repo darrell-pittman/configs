@@ -132,4 +132,4 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export EDITOR="emacsclient -t -a=\"\""
+export EDITOR="emacsclient -c -a=\"\""
