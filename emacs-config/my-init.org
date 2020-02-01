@@ -22,6 +22,8 @@
     ;; This tls setting required if emcs version >= 26.3
     (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
+    (setq save-interprogram-paste-before-kill t)
+
     (defun load-if-exists (f)
       "load the elisp file only if it exists and is readable"
       (when (file-readable-p f)
@@ -93,26 +95,32 @@
 	 ((t (:inherit ace-jump-face-foreground :height 3.0)))))
       ))
   #+END_SRC
-* Swiper
+* Swiper / Counsel / Ivy
   Used for searches
   #+BEGIN_SRC emacs-lisp
-  (use-package counsel
-    :ensure t)
+    (use-package counsel
+      :ensure t
+      :bind (("M-y" . counsel-yank-pop)))
 
-  (use-package swiper
-    :ensure t
-    :bind(("C-s" . swiper)
-	  ("C-r" . swiper)
-	  ("C-c C-r" . ivy-resume)
-	  ("M-x" . counsel-M-x)
-	  ("C-x C-f" . counsel-find-file))
-    :config
-    (progn
-      (ivy-mode 1)
-      (setq ivy-use-virtual-buffers t)
-      (setq ivy-display-style 'fancy)
-      (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
-      ))
+    (use-package ivy
+      :ensure t
+      :diminish (ivy-mode)
+      :bind (("C-x b" . ivy-switch-buffer))
+      :config
+	(ivy-mode 1)
+	(setq ivy-use-virtual-buffers t)
+	(setq ivy-display-style 'fancy))
+
+    (use-package swiper
+      :ensure t
+      :bind(("C-s" . swiper)
+	    ("C-r" . swiper)
+	    ("C-c C-r" . ivy-resume)
+	    ("M-x" . counsel-M-x)
+	    ("C-x C-f" . counsel-find-file))
+      :config
+	(define-key read-expression-map (kbd "C-r") 'counsel-expression-history))
+
   #+END_SRC
 
 * Avy
