@@ -1,3 +1,5 @@
+
+
 #+STARTUP: overview
 * Sample init.el
   Below is a sample init.el that initializes emacs and loads this my-init.org file:
@@ -148,6 +150,20 @@
       :init
       (global-undo-tree-mode))
   #+END_SRC
+* Projectile
+#+BEGIN_SRC emacs-lisp
+  (use-package projectile
+    :ensure t
+    :config
+    (projectile-mode 1)
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+
+  (use-package counsel-projectile
+    :ensure t
+    :config
+    (counsel-projectile-mode t))
+
+#+END_SRC
 * Misc Packages
   #+BEGIN_SRC emacs-lisp
     (use-package beacon
