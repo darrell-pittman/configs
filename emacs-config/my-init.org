@@ -1,5 +1,4 @@
 
-
 #+STARTUP: overview
 * Sample init.el
   Below is a sample init.el that initializes emacs and loads this my-init.org file:
@@ -87,15 +86,21 @@
 * Ace Window
   Adds numbers for selecting windows
   #+BEGIN_SRC emacs-lisp
-  (use-package ace-window
-    :ensure t
-    :init
-    (progn
-      (global-set-key [remap other-window] 'ace-window)
-      (custom-set-faces
-       '(aw-leading-char-face
-	 ((t (:inherit ace-jump-face-foreground :height 3.0)))))
-      ))
+    (use-package ace-window
+      :ensure t
+      :init
+      (progn
+	(global-set-key [remap other-window] 'ace-window)
+	(custom-set-faces
+	 '(aw-leading-char-face
+	   ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+	))
+
+    (defun wgc/swap-window ()
+      "Swap windows and leave focus on original window"
+      (interactive)
+      (ace-swap-window)
+      (aw-flip-window))
   #+END_SRC
 * Swiper / Counsel / Ivy
   Used for searches
@@ -151,18 +156,35 @@
       (global-undo-tree-mode))
   #+END_SRC
 * Projectile
-#+BEGIN_SRC emacs-lisp
+  #+BEGIN_SRC emacs-lisp
   (use-package projectile
     :ensure t
     :config
     (projectile-mode 1)
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map))
+    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
+    (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map))
 
   (use-package counsel-projectile
     :ensure t
     :config
     (counsel-projectile-mode t))
 
+  #+END_SRC
+* Flycheck
+  #+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :init
+    (global-flycheck-mode t))
+
+  #+END_SRC
+* Company
+  For auto completion
+#+BEGIN_SRC emacs-lisp
+  (use-package company
+    :ensure t
+    :config
+    (global-company-mode))
 #+END_SRC
 * Misc Packages
   #+BEGIN_SRC emacs-lisp
@@ -206,6 +228,39 @@
   (setq css-indent-offset 2)
 
    #+END_SRC
+** Haskell
+   #+BEGIN_SRC emacs-lisp
+     ;;(use-package lsp-mode
+     ;;  :ensure t
+     ;;  :hook (haskell-mode . lsp)
+     ;;  :commands lsp
+     ;;  :config
+     ;;  (setq lsp-ui-doc-enable nil)
+     ;;  (setq lsp-document-sync-method 'full))
+     ;;
+     ;;(use-package lsp-ui
+     ;;  :ensure t
+     ;;  :hook (haskell-mode . flycheck-mode)
+     ;;  :commands lsp-ui-mode)
+     ;;
+     ;;(use-package lsp-haskell
+     ;; :ensure t
+     ;; :config
+     ;; (setq lsp-haskell-process-path-hie "hie-wrapper")
+     ;; (setq lsp-haskell-process-args-hie '())
+     ;; ;; Comment/uncomment this line to see interactions between lsp client/server.
+     ;; ;; (setq lsp-log-io t)
+     ;;)
+     (use-package haskell-mode
+       :ensure t
+       :hook
+       (haskell-mode . (lambda ()
+		      (set (make-local-variable 'company-backends)
+			   (append '((company-capf company-dabbrev-code))
+				   company-backends))))
+       :config
+       (setq haskell-tags-on-save t))
+   #+END_SRC
 * Load Other Files
   #+BEGIN_SRC emacs-lisp
     (load-if-exists "~/configs/emacs-config/my-private.el")
@@ -219,4 +274,7 @@
 
     (setq create-lockfiles nil)
 
+    (define-prefix-command 'wgc-map)
+    (global-set-key (kbd "C-`") 'wgc-map)
+    (define-key wgc-map (kbd "s") 'wgc/swap-window)
   #+END_SRC
