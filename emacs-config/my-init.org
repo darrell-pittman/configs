@@ -157,17 +157,18 @@
   #+END_SRC
 * Projectile
   #+BEGIN_SRC emacs-lisp
-  (use-package projectile
-    :ensure t
-    :config
-    (projectile-mode 1)
-    (define-key projectile-mode-map (kbd "C-c p") 'projectile-command-map)
-    (define-key projectile-mode-map (kbd "s-p") 'projectile-command-map))
+    (use-package projectile
+      :ensure t
+      :bind-keymap
+      ("C-c p" . projectile-command-map)
+      ("s-p" . projectile-command-map)
+      :config
+      (projectile-mode 1))
 
-  (use-package counsel-projectile
-    :ensure t
-    :config
-    (counsel-projectile-mode t))
+    (use-package counsel-projectile
+      :ensure t
+      :config
+      (counsel-projectile-mode t))
 
   #+END_SRC
 * Flycheck
@@ -253,13 +254,20 @@
      ;;)
      (use-package haskell-mode
        :ensure t
+       :bind
+       (:map haskell-mode-map
+	     ("C-c C-c" . haskell-compile))
+       (:map haskell-cabal-mode-map
+	     ("C-c C-c" . haskell-compile))
        :hook
        (haskell-mode . (lambda ()
 		      (set (make-local-variable 'company-backends)
 			   (append '((company-capf company-dabbrev-code))
 				   company-backends))))
        :config
-       (setq haskell-tags-on-save t))
+       (setq haskell-tags-on-save t)
+       (setq haskell-stylish-on-save t)
+       (setq haskell-compile-cabal-build-command "stack build"))
    #+END_SRC
 * Load Other Files
   #+BEGIN_SRC emacs-lisp
@@ -273,6 +281,7 @@
 	  `((".*" ,temporary-file-directory t))) 
 
     (setq create-lockfiles nil)
+    (setq tags-revert-without-query t)
 
     (define-prefix-command 'wgc-map)
     (global-set-key (kbd "C-`") 'wgc-map)
