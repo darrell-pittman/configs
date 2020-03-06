@@ -1,4 +1,3 @@
-
 #+STARTUP: overview
 * Sample init.el
   Below is a sample init.el that initializes emacs and loads this my-init.org file:
@@ -264,6 +263,7 @@
 		      (set (make-local-variable 'company-backends)
 			   (append '((company-capf company-dabbrev-code))
 				   company-backends))))
+       (haskell-mode . interactive-haskell-mode)
        :config
        (setq haskell-tags-on-save t)
        (setq haskell-stylish-on-save t)
@@ -284,6 +284,6 @@
     (setq tags-revert-without-query t)
 
     (define-prefix-command 'wgc-map)
-    (global-set-key (kbd "C-`") 'wgc-map)
+    (global-set-key (kbd "C-1") 'wgc-map)
     (define-key wgc-map (kbd "s") 'wgc/swap-window)
   #+END_SRC
