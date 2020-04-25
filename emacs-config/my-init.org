@@ -276,6 +276,11 @@
   #+END_SRC
 * Misc
   #+BEGIN_SRC emacs-lisp
+    (require 'paren)
+    (set-face-background 'show-paren-match (face-background 'default))
+    (set-face-foreground 'show-paren-match "#000")
+    (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+    (show-paren-mode)
     (setq backup-directory-alist
 	      `((".*" . ,temporary-file-directory)))
     (setq auto-save-file-name-transforms
