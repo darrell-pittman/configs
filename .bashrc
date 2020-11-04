@@ -133,3 +133,4 @@ if ! shopt -oq posix; then
 fi
 
 export EDITOR="emacsclient -c -a=\"\""
+. $HOME/software/vulkan/1.2.148.1/setup-env.sh 
