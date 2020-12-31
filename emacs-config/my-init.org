@@ -33,6 +33,7 @@
 * Interface Tweaks
   #+BEGIN_SRC emacs-lisp
     (setq inhibit-startup-message t)
+    (setq gdb-many-windows t)
     (tool-bar-mode -1)
     (fset 'yes-or-no-p 'y-or-n-p)
     (global-set-key (kbd "<f5>") 'revert-buffer)
@@ -173,10 +174,12 @@
   #+END_SRC
 * Flycheck
   #+BEGIN_SRC emacs-lisp
-  (use-package flycheck
-    :ensure t
-    :init
-    (global-flycheck-mode t))
+    (use-package flycheck
+      :ensure t
+      :hook
+      (prog-mode . flycheck-mode))
+    (use-package flycheck-rust
+      :ensure t)
 
   #+END_SRC
 * Company
@@ -270,6 +273,18 @@
        (setq haskell-stylish-on-save t)
        (setq haskell-compile-cabal-build-command "stack build"))
    #+END_SRC
+** Rust
+   #+BEGIN_SRC emacs-lisp
+	  (use-package rust-mode
+	    :ensure t
+	    :hook
+	    (
+	     (rust-mode . (lambda () (setq indent-tabs-mode nil)))
+	     (flycheck-mode . (lambda () (flycheck-rust-setup)))
+	    ))
+
+   #+END_SRC
+
 * Load Other Files
   #+BEGIN_SRC emacs-lisp
     (load-if-exists "~/configs/emacs-config/my-private.el")
