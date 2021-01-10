@@ -5,13 +5,13 @@
   (require 'package)
   (setq package-enable-at-startup nil)
   (add-to-list 'package-archives
-  '("melpa" . "https://melpa.org/packages/"))
+    '("melpa" . "https://melpa.org/packages/"))
 
   (package-initialize)
 
   (unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+    (package-refresh-contents)
+    (package-install 'use-package))
 
   (org-babel-load-file (expand-file-name "~/.emacs.d/my-init.org"))
 
@@ -35,6 +35,7 @@
     (setq inhibit-startup-message t)
     (setq gdb-many-windows t)
     (tool-bar-mode -1)
+    (scroll-bar-mode -1)
     (fset 'yes-or-no-p 'y-or-n-p)
     (global-set-key (kbd "<f5>") 'revert-buffer)
 
@@ -199,11 +200,24 @@
 
     (use-package expand-region
       :ensure t
-      :config
-      (global-set-key (kbd "C-=") 'er/expand-region))
+      :bind
+      (("C-=" . er/expand-region)))
 
     (use-package iedit
       :ensure t)
+
+    (use-package helpful
+      :ensure t
+      :config
+      (setq counsel-describe-function-function #'helpful-callable)
+      (setq counsel-describe-variable-function #'helpful-variable)
+      :bind
+      (("C-h f" . helpful-callable)
+       ("C-h v" . helpful-variable)
+       ("C-h k" . helpful-key)
+       ("C-c C-d" . helpful-at-point)
+       ("C-h F" . helpful-function)
+       ("C-h C" . helpful-command)))
   #+END_SRC
 * Modes
 ** Web Mode
