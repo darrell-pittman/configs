@@ -192,7 +192,7 @@
 <keyboard>
   <chainQuitKey>C-g</chainQuitKey>
 
-  <!-- Keybindings for desktop switching -->
+  <!-- Keybindings for desktop switching 
   <keybind key="C-A-Left">
     <action name="GoToDesktop"><to>left</to><wrap>no</wrap></action>
   </keybind>
@@ -217,6 +217,7 @@
   <keybind key="S-A-Down">
     <action name="SendToDesktop"><to>down</to><wrap>no</wrap></action>
   </keybind>
+  -->
   <keybind key="W-F1">
     <action name="GoToDesktop"><to>1</to></action>
   </keybind>
@@ -242,9 +243,11 @@
     <action name="FocusToBottom"/>
     <action name="Unfocus"/>
   </keybind>
+  <!--
   <keybind key="A-space">
     <action name="ShowMenu"><menu>client-menu</menu></action>
   </keybind>
+  -->
   <keybind key="W-KP_9">
     <action name="Unmaximize"/>
     <action name="MoveResizeTo">
