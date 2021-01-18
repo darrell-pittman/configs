@@ -1,0 +1,123 @@
+#+STARTUP: overview
+* Sample init.el
+The source block below shows a sample init.el that will load this file.
+Note the :tangle no after the begin_src block : this means that this block will not end up in the generated .el file.
+#+begin_src emacs-lisp :tangle no
+  (require 'package)
+  (setq package-enable-at-startup nil)
+
+  (add-to-list 'package-archives
+               '("melpa" . "https://melpa.org/packages/"))
+  (add-to-list 'package-archives 
+               '("org" . "https://orgmode.org/elpa/"))
+  (add-to-list 'package-archives
+               '("gnu" . "https://elpa.gnu.org/packages/"))
+
+
+  (package-initialize)
+  (unless package-archive-contents
+    (package-refresh-contents))
+
+  (unless (package-installed-p 'use-package)
+    (package-install 'use-package))
+
+  (require 'use-package)
+  (setq use-package-always-ensure t)
+
+  (org-babel-load-file (expand-file-name "~/.emacs.d/emacs.org"))
+#+end_src
+
+* Init
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/customizations/")
+
+  ;; This tls setting required if emcs version >= 26.3
+  (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+
+  (setq save-interprogram-paste-before-kill t)
+
+  (defun wgc/load-if-exists (f)
+    "load the elisp file only if it exists and is readable"
+    (when (file-readable-p f)
+      (load-file f)))
+
+  ;; Save temporary file to tmp dir and don't create lock files
+  (setq backup-directory-alist
+        `((".*" . ,temporary-file-directory)))
+  (setq auto-save-file-name-transforms
+        `((".*" ,temporary-file-directory t))) 
+
+  (setq create-lockfiles nil)
+#+end_src
+* Interface Tweaks
+** Look and Feel
+#+begin_src emacs-lisp
+  (setq inhibit-startup-message t)
+  (setq visible-bell t)
+
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (tooltip-mode -1)
+  (set-fringe-mode 10)
+#+end_src
+** Line Numbers
+#+begin_src emacs-lisp
+  (column-number-mode)
+  (global-display-line-numbers-mode t)
+
+  ;; Don't display line numbers for some modes
+  (dolist (mode '(org-mode-hook
+                  term-mode-hook
+                  eshell-mode-hook
+                  shell-mode-hook
+                  help-mode-hook
+                  helpful-mode-hook))
+    (add-hook mode (lambda () (display-line-numbers-mode 0))))
+#+end_src
+** Fonts 
+#+begin_src emacs-lisp
+  (defvar wgc/default-font-size 140)
+  (defvar wgc/default-variable-font-size 140)
+
+  ;; Set default face
+  (set-face-attribute
+   'default nil
+   :font "Fira Code Retina"
+   :height wgc/default-font-size)
+
+  ;; Set the fixed pitch face
+  (set-face-attribute
+   'fixed-pitch nil
+   :font "Fira Code Retina"
+   :height wgc/default-font-size)
+
+  ;; Set the variable pitch face
+  (set-face-attribute
+   'variable-pitch nil
+   :font "Cantarell"
+   :height wgc/default-variable-font-size
+   :weight 'regular)
+#+end_src
+** Theme
+#+begin_src emacs-lisp
+  (use-package sunburn-theme
+    :config (load-theme 'sunburn t))
+#+end_src
+* Modeline
+#+begin_src emacs-lisp
+  (use-package all-the-icons
+    :if (display-graphic-p)
+    :commands all-the-icons-install-fonts
+    :config
+    (unless (find-font (font-spec :name "all-the-icons"))
+      (all-the-icons-install-fonts t)))
+
+  (use-package all-the-icons-dired
+    :if (display-graphic-p)
+    :hook(dired-mode . all-the-icons-dired-mode))
+
+  (use-package doom-modeline
+    :init (doom-modeline-mode 1)
+    :custom (doom-modeline-height 15))
+#+end_src
