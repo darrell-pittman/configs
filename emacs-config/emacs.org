@@ -1,4 +1,5 @@
 #+STARTUP: overview
+#+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/emacs.el
 * Sample init.el
 The source block below shows a sample init.el that will load this file.
 Note the :tangle no after the begin_src block : this means that this block will not end up in the generated .el file.
@@ -13,7 +14,6 @@ Note the :tangle no after the begin_src block : this means that this block will 
   (add-to-list 'package-archives
                '("gnu" . "https://elpa.gnu.org/packages/"))
 
-
   (package-initialize)
   (unless package-archive-contents
     (package-refresh-contents))
@@ -24,7 +24,7 @@ Note the :tangle no after the begin_src block : this means that this block will 
   (require 'use-package)
   (setq use-package-always-ensure t)
 
-  (org-babel-load-file (expand-file-name "~/.emacs.d/emacs.org"))
+  (load-file (expand-file-name "~/.emacs.d/emacs.el"))
 #+end_src
 
 * Init
@@ -36,11 +36,6 @@ Note the :tangle no after the begin_src block : this means that this block will 
 
   (setq save-interprogram-paste-before-kill t)
 
-  (defun wgc/load-if-exists (f)
-    "load the elisp file only if it exists and is readable"
-    (when (file-readable-p f)
-      (load-file f)))
-
   ;; Save temporary file to tmp dir and don't create lock files
   (setq backup-directory-alist
         `((".*" . ,temporary-file-directory)))
@@ -48,6 +43,14 @@ Note the :tangle no after the begin_src block : this means that this block will 
         `((".*" ,temporary-file-directory t))) 
 
   (setq create-lockfiles nil)
+#+end_src
+
+** Helper Functions
+#+begin_src emacs-lisp
+  (defun wgc/load-if-exists (f)
+    "load the elisp file only if it exists and is readable"
+    (when (file-readable-p f)
+      (load-file f)))
 #+end_src
 * Interface Tweaks
 ** Look and Feel
@@ -104,6 +107,11 @@ Note the :tangle no after the begin_src block : this means that this block will 
   (use-package sunburn-theme
     :config (load-theme 'sunburn t))
 #+end_src
+** Delimiters
+#+begin_src emacs-lisp
+  (use-package rainbow-delimiters
+    :hook (prog-mode . rainbow-delimiters-mode))
+#+end_src
 * Modeline
 #+begin_src emacs-lisp
   (use-package all-the-icons
@@ -121,3 +129,283 @@ Note the :tangle no after the begin_src block : this means that this block will 
     :init (doom-modeline-mode 1)
     :custom (doom-modeline-height 15))
 #+end_src
+* Key Bindings
+#+begin_src emacs-lisp
+  (use-package general
+    :config
+    (global-unset-key (kbd "C-SPC"))
+    (general-create-definer wgc/leader
+      :keymaps '(normal insert visual emacs)
+      :prefix "SPC"
+      :global-prefix "C-SPC")
+    (wgc/leader
+      "o" '(:ignore t :which-key "org")
+      "g" '(:ignore t :which-key "git")
+      "t" '(:ignore t :which-key "toggles")
+      "e" '(:ignore t :which-key "edits")
+      "e SPC" 'set-mark-command
+      "SPC" 'universal-argument)
+    (general-def "<f5>" 'revert-buffer)
+    (general-def "<escape>" 'keyboard-escape-quit))
+#+end_src
+* Which Key
+#+begin_src emacs-lisp
+
+  (use-package which-key
+    :init (which-key-mode)
+    :diminish which-key-mode
+    :custom (which-key-idle-delay 0.3))
+#+end_src
+* Ivy/Counsel/Swiper/Helpful
+#+begin_src emacs-lisp
+  (use-package ivy
+    :diminish ivy-mode
+    :bind (("C-s" . swiper)
+           :map ivy-minibuffer-map
+           ("TAB" . ivy-alt-done)
+           ("C-l" . ivy-alt-done)
+           ("C-j" . ivy-next-line)
+           ("C-k" . ivy-previous-line)
+           :map ivy-switch-buffer-map
+           ("C-k" . ivy-previous-line)
+           ("C-l" . ivy-done)
+           ("C-d" . ivy-switch-buffer-kill)
+           :map ivy-reverse-i-search-map
+           ("C-k" . ivy-previous-line)
+           ("C-d" . ivy-reverse-i-search-kill))
+    :init
+    (ivy-mode))
+
+  (use-package counsel
+    :bind(([remap execute-extended-command] . counsel-M-x)
+          ([remap find-file] . counsel-find-file)
+          ("C-x b" . counsel-switch-buffer)
+          :map minibuffer-local-map
+          ("C-r" . counsel-minibuffer-history)))
+
+  (use-package ivy-rich
+    :init (ivy-rich-mode))
+
+  (use-package helpful
+    :custom
+    (counsel-describe-function-function #'helpful-callable)
+    (counsel-describe-variable-function #'helpful-variable)
+    :bind
+    ([remap describe-function] . counsel-describe-function)
+    ([remap describe-command] . helpful-command)
+    ([remap describe-variable] . counsel-describe-variable)
+    ([remap describe-key] . helpful-key))
+#+end_src
+* Evil Mode
+#+begin_src emacs-lisp
+  (defun wgc/evil-hook ()
+    (dolist (mode '(custom-mode
+                    eshell-mode
+                    git-rebase-mode
+                    erc-mode
+                    term-mode
+                    shell-mode))
+      (add-to-list 'evil-emacs-state-modes mode)))
+
+  (use-package evil
+    :init
+    (setq evil-want-integration t)
+    (setq evil-want-keybinding nil)
+    (setq evil-want-C-u-scroll t)
+    (setq evil-want-C-i-jump nil)
+    (evil-mode)
+    :hook (evil-mode . wgc/evil-hook)
+    :config
+    (general-define-key
+     :keymaps 'evil-insert-state-map
+     "C-g" 'evil-normal-state
+     "C-h" 'evil-delete-backward-char-and-join)
+    (general-def 'motion
+      "j" 'evil-next-visual-line
+      "k" 'evil-previous-visual-line)
+    (evil-set-initial-state 'messages-buffer-mode 'normal)
+    (evil-set-initial-state 'dashboard-mode 'normal))
+
+  (use-package evil-collection
+    :after evil
+    :config
+    (evil-collection-init))
+#+end_src
+* Key Chord
+#+begin_src emacs-lisp
+  (use-package key-chord
+    :init (key-chord-mode)
+    :custom
+    (key-chord-two-keys-delay 0.2)
+    (key-chord-one-key-delay 0.3))
+
+  (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+#+end_src
+* Hydra
+#+begin_src emacs-lisp
+  (use-package hydra)
+
+  (defhydra hydra-text-scale (:timeout 4)
+    "Scale Text"
+    ("j" text-scale-increase "in")
+    ("k" text-scale-decrease "out")
+    ("f" nil "finished" :exit t))
+
+  (wgc/leader
+    "ts" '(hydra-text-scale/body :which-key "scale text"))
+#+end_src
+* Magit
+#+begin_src emacs-lisp
+   (use-package magit
+     :custom
+     (magit-display-buffer-function
+      #'magit-display-buffer-same-window-except-diff-v1)
+     (magit-no-message '("Turning on magit-auto-revert-mode..."))
+     :config
+     (setq magit-auto-revert-mode t))
+
+   (general-def
+     "C-M-;" 'magit-status)
+
+   (wgc/leader
+     "gs" 'magit-status
+     "gd" 'magit-diff-unstaged
+     "gc" 'magit-branch-or-checkout
+     "gl" '(:ignore t :which-key "log")
+     "glc" 'magit-log-current
+     "glf" 'magit-log-buffer-file
+     "gb" 'magit-branch
+     "gP" 'magit-push-current
+     "gp" 'magit-pull-branch
+     "gf" 'magit-fetch
+     "gF" 'magit-fetch-all
+     "gr" 'magit-rebase)
+#+end_src
+* Projectile
+#+begin_src emacs-lisp
+  (use-package projectile
+    :diminish projectile-mode
+    :init
+    (projectile-mode)
+    (when (file-directory-p "~/projects")
+      (setq projectile-project-search-path '("~/projects")))
+    (setq projectile-switch-project-action #'projectile-dired))
+
+
+  (use-package counsel-projectile
+    :init
+    (counsel-projectile-mode))
+
+  (wgc/leader
+    "p" '(projectile-command-map :which-key "projectile"))
+#+end_src
+* Org Mode
+** Setup Functions
+#+begin_src emacs-lisp
+      (defun wgc/org-mode-setup ()
+        (org-indent-mode)
+        (variable-pitch-mode 1)
+        (visual-line-mode 1))
+
+      (defun wgc/org-fonts-setup ()
+        ;; Replace list hyphen with dot
+        (font-lock-add-keywords 'org-mode
+                                '(("^ *\\([-]\\) "
+                                   (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+        ;; Set faces for heading levels
+        (dolist (face '((org-level-1 . 1.2)
+                        (org-level-2 . 1.1)
+                        (org-level-3 . 1.05)
+                        (org-level-4 . 1.0)
+                        (org-level-5 . 0.95)
+                        (org-level-6 . 0.9)
+                        (org-level-7 . 0.85)
+                        (org-level-8 . 0.8)))
+          (set-face-attribute (car face) nil :font "Cantarell" :weight 'regular :height (cdr face)))
+
+        ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+        (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
+        (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
+        (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+        (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
+        (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
+        (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+        (set-face-attribute 'org-special-keyword nil
+                            :inherit '(font-lock-comment-face fixed-pitch))
+        (set-face-attribute 'org-meta-line nil
+                            :inherit '(font-lock-comment-face fixed-pitch))
+        (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
+
+        (set-face-underline 'org-ellipsis nil))
+#+end_src
+** Install
+#+begin_src emacs-lisp
+  (use-package org
+    :ensure org-plus-contrib
+    :pin org
+    :hook (org-mode . wgc/org-mode-setup)
+    :custom
+    (org-ellipsis " ▾")
+    (org-agenda-files
+          '("~/Documents/org-files/tasks.org"))
+    (org-agenda-start-with-log-mode t)
+    (org-log-done 'time)
+    (org-log-into-drawer t)
+    (org-confirm-babel-evaluate nil)
+    :config
+    (wgc/org-fonts-setup))
+#+end_src
+** Look and Feel
+#+begin_src emacs-lisp
+  (wgc/leader
+    "oa" 'org-agenda
+    "ol" 'org-store-link
+    "oc" 'org-capture)
+
+  (use-package org-bullets
+    :after org
+    :hook (org-mode . org-bullets-mode)
+    :custom
+    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
+
+  (defun wgc/org-mode-fill-column ()
+    (setq visual-fill-column-width 100
+          visual-fill-column-center-text t)
+    (visual-fill-column-mode 1))
+
+  (require 'org-tempo)
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+
+  (use-package visual-fill-column
+    :hook (org-mode . wgc/org-mode-fill-column))
+#+end_src
+**  Auto Tangle Config File
+#+begin_src emacs-lisp
+  (defun wgc/tangle-config ()
+    (when (string-equal (buffer-file-name)
+                        (expand-file-name "~/configs/emacs-config/emacs.org"))
+      (let ((org-confirm-babel-evaluate nil))
+        (org-babel-tangle))))
+
+  (add-hook 'org-mode-hook
+            (lambda () (add-hook 'after-save-hook #'wgc/tangle-config)))
+#+end_src
+* Paredit
+#+begin_src emacs-lisp
+  (use-package paredit
+    :commands (enable-paredit-mode))
+
+  (use-package evil-paredit
+    :commands (evil-paredit-mode))
+
+  (dolist (mode '(emacs-lisp-mode-hook
+                  eval-expression-minibuffer-setup-hook
+                  ielm-mode-hook
+                  lisp-mode-hook
+                  lisp-interaction-mode-hook
+                  scheme-mode-hook))
+    (add-hook mode #'enable-paredit-mode)
+    (add-hook mode #'evil-paredit-mode))
+#+end_src
+
