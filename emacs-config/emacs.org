@@ -14,6 +14,7 @@ Note the :tangle no after the begin_src block : this means that this block will 
                '("gnu" . "https://elpa.gnu.org/packages/"))
 
   (package-initialize)
+  (setq package-enable-at-startup nil)
   (unless package-archive-contents
     (package-refresh-contents))
 
@@ -108,6 +109,11 @@ Note the :tangle no after the begin_src block : this means that this block will 
 #+end_src
 ** Delimiters
 #+begin_src emacs-lisp
+  (require 'paren)
+  (set-face-background 'show-paren-match (face-background 'default))
+  (set-face-foreground 'show-paren-match "#ffff00")
+  (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+  (show-paren-mode)
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
@@ -354,10 +360,10 @@ Note the :tangle no after the begin_src block : this means that this block will 
     (org-confirm-babel-evaluate nil)
     :config
     (wgc/org-fonts-setup)
-    (require 'org-habit)
-    (require 'org-tempo)
-    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp")))
-
+    (add-to-list 'org-modules 'org-tempo t)
+    (add-to-list 'org-modules 'org-habit t)
+    (org-load-modules-maybe t)
+    (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp") t))
 #+end_src
 ** Look and Feel
 #+begin_src emacs-lisp
