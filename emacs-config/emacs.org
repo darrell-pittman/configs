@@ -153,9 +153,13 @@ Note the :tangle no after the begin_src block : this means that this block will 
     (general-def "<f5>" 'revert-buffer)
     (general-def "<escape>" 'keyboard-escape-quit))
 #+end_src
+* Try
+  Allows trying trying packages without installing them
+  #+begin_src emacs-lisp
+    (use-package try)
+  #+end_src
 * Which Key
 #+begin_src emacs-lisp
-
   (use-package which-key
     :init (which-key-mode)
     :diminish which-key-mode
@@ -261,30 +265,30 @@ Note the :tangle no after the begin_src block : this means that this block will 
 #+end_src
 * Magit
 #+begin_src emacs-lisp
-   (use-package magit
-     :custom
-     (magit-display-buffer-function
-      #'magit-display-buffer-same-window-except-diff-v1)
-     (magit-no-message '("Turning on magit-auto-revert-mode..."))
-     :config
-     (setq magit-auto-revert-mode t))
+  (use-package magit
+    :custom
+    (magit-display-buffer-function
+     #'magit-display-buffer-same-window-except-diff-v1)
+    (magit-no-message '("Turning on magit-auto-revert-mode..."))
+    :config
+    (setq magit-auto-revert-mode t))
 
-   (general-def
-     "C-M-;" 'magit-status)
+  (general-def
+    "C-M-;" 'magit-status)
 
-   (wgc/leader
-     "gs" 'magit-status
-     "gd" 'magit-diff-unstaged
-     "gc" 'magit-branch-or-checkout
-     "gl" '(:ignore t :which-key "log")
-     "glc" 'magit-log-current
-     "glf" 'magit-log-buffer-file
-     "gb" 'magit-branch
-     "gP" 'magit-push-current
-     "gp" 'magit-pull-branch
-     "gf" 'magit-fetch
-     "gF" 'magit-fetch-all
-     "gr" 'magit-rebase)
+  (wgc/leader
+    "gs" 'magit-status
+    "gd" 'magit-diff-unstaged
+    "gc" 'magit-branch-or-checkout
+    "gl" '(:ignore t :which-key "log")
+    "glc" 'magit-log-current
+    "glf" 'magit-log-buffer-file
+    "gb" 'magit-branch
+    "gP" 'magit-push-current
+    "gp" 'magit-pull-branch
+    "gf" 'magit-fetch
+    "gF" 'magit-fetch-all
+    "gr" 'magit-rebase)
 #+end_src
 * Projectile
 #+begin_src emacs-lisp
@@ -353,7 +357,7 @@ Note the :tangle no after the begin_src block : this means that this block will 
     :custom
     (org-ellipsis " ▾")
     (org-agenda-files
-          '("~/Documents/org-files/tasks.org"))
+     '("~/Documents/org-files/tasks.org"))
     (org-agenda-start-with-log-mode t)
     (org-log-done 'time)
     (org-log-into-drawer t)
@@ -364,6 +368,15 @@ Note the :tangle no after the begin_src block : this means that this block will 
     (add-to-list 'org-modules 'org-habit t)
     (org-load-modules-maybe t)
     (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp") t))
+#+end_src
+** Install Evil Org
+#+begin_src emacs-lisp
+  (use-package evil-org
+    :after org
+    :hook (org-mode . (lambda () evil-org-mode))
+    :config
+    (require 'evil-org-agenda)
+    (evil-org-agenda-set-keys))
 #+end_src
 ** Look and Feel
 #+begin_src emacs-lisp
@@ -386,7 +399,7 @@ Note the :tangle no after the begin_src block : this means that this block will 
   (use-package visual-fill-column
     :hook (org-mode . wgc/org-mode-fill-column))
 #+end_src
-**  Auto Tangle Config File
+** Auto Tangle Config File
 #+begin_src emacs-lisp
   (defun wgc/tangle-config ()
     (when (string-equal (buffer-file-name)
@@ -396,6 +409,12 @@ Note the :tangle no after the begin_src block : this means that this block will 
 
   (add-hook 'org-mode-hook
             (lambda () (add-hook 'after-save-hook #'wgc/tangle-config)))
+#+end_src
+** Misc 
+#+begin_src emacs-lisp
+  (defun wgc/open-task-file ()
+    (find-file
+     (expand-file-name "~/Documents/org-files/tasks.org")))
 #+end_src
 * Paredit
 #+begin_src emacs-lisp
