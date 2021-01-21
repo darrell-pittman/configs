@@ -1,3 +1,4 @@
+#+TITLE: My Emacs Config
 #+STARTUP: overview
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/emacs.el
 * Sample init.el
@@ -63,6 +64,11 @@ Note the :tangle no after the begin_src block : this means that this block will 
   (tool-bar-mode -1)
   (tooltip-mode -1)
   (set-fringe-mode 10)
+
+  ;; Favour vertical split
+  (setq split-height-threshold nil)
+  (setq split-width-threshold 80)
+
 #+end_src
 ** Line Numbers
 #+begin_src emacs-lisp
@@ -263,33 +269,6 @@ Note the :tangle no after the begin_src block : this means that this block will 
   (wgc/leader
     "ts" '(hydra-text-scale/body :which-key "scale text"))
 #+end_src
-* Magit
-#+begin_src emacs-lisp
-  (use-package magit
-    :custom
-    (magit-display-buffer-function
-     #'magit-display-buffer-same-window-except-diff-v1)
-    (magit-no-message '("Turning on magit-auto-revert-mode..."))
-    :config
-    (setq magit-auto-revert-mode t))
-
-  (general-def
-    "C-M-;" 'magit-status)
-
-  (wgc/leader
-    "gs" 'magit-status
-    "gd" 'magit-diff-unstaged
-    "gc" 'magit-branch-or-checkout
-    "gl" '(:ignore t :which-key "log")
-    "glc" 'magit-log-current
-    "glf" 'magit-log-buffer-file
-    "gb" 'magit-branch
-    "gP" 'magit-push-current
-    "gp" 'magit-pull-branch
-    "gf" 'magit-fetch
-    "gF" 'magit-fetch-all
-    "gr" 'magit-rebase)
-#+end_src
 * Projectile
 #+begin_src emacs-lisp
   (use-package projectile
@@ -438,5 +417,73 @@ Note the :tangle no after the begin_src block : this means that this block will 
   (use-package expand-region
     :bind
     (("C-=" . er/expand-region)))
+#+end_src
+* Programming
+** Magit
+#+begin_src emacs-lisp
+  (use-package magit
+    :custom
+    (magit-display-buffer-function
+     #'magit-display-buffer-same-window-except-diff-v1)
+    (magit-no-message '("Turning on magit-auto-revert-mode..."))
+    :config
+    (setq magit-auto-revert-mode t))
+
+  (general-def
+    "C-M-;" 'magit-status)
+
+  (wgc/leader
+    "gs" 'magit-status
+    "gd" 'magit-diff-unstaged
+    "gc" 'magit-branch-or-checkout
+    "gl" '(:ignore t :which-key "log")
+    "glc" 'magit-log-current
+    "glf" 'magit-log-buffer-file
+    "gb" 'magit-branch
+    "gP" 'magit-push-current
+    "gp" 'magit-pull-branch
+    "gf" 'magit-fetch
+    "gF" 'magit-fetch-all
+    "gr" 'magit-rebase)
+#+end_src
+** Flycheck
+#+begin_src emacs-lisp
+  (use-package flycheck
+    :hook (prog-mode . flycheck-mode))
+#+end_src
+** Company
+#+begin_src emacs-lisp
+  (use-package company
+    :hook
+    ((prog-mode . company-mode))
+    :config
+    (global-company-mode))
+#+end_src
+** LSP Mode
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :commands (lsp lsp-deferred)
+    :custom
+    (lsp-keymap-prefix "C-c l")
+    :config
+    (lsp-enable-which-key-integration t))
+
+  (use-package lsp-ui)
+#+end_src
+** Languages
+*** Rust
+#+begin_src emacs-lisp
+  (use-package flycheck-rust)
+
+  (use-package rust-mode
+    :hook
+    ((rust-mode . (lambda ()
+                    (lsp)
+                    (setq indent-tabs-mode nil)))
+     (flycheck-mode . (lambda () (flycheck-rust-setup)))))
+#+end_src
+*** Toml
+#+begin_src emacs-lisp
+  (use-package toml)
 #+end_src
 
