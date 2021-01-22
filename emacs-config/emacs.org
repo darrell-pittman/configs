@@ -160,10 +160,10 @@ Note the :tangle no after the begin_src block : this means that this block will 
     (general-def "<escape>" 'keyboard-escape-quit))
 #+end_src
 * Try
-  Allows trying trying packages without installing them
-  #+begin_src emacs-lisp
-    (use-package try)
-  #+end_src
+Allows trying trying packages without installing them
+#+begin_src emacs-lisp
+  (use-package try)
+#+end_src
 * Which Key
 #+begin_src emacs-lisp
   (use-package which-key
@@ -177,7 +177,7 @@ Note the :tangle no after the begin_src block : this means that this block will 
     :diminish ivy-mode
     :bind (("C-s" . swiper)
            :map ivy-minibuffer-map
-           ("TAB" . ivy-alt-done)
+           ("<tab>" . ivy-alt-done)
            ("C-l" . ivy-alt-done)
            ("C-j" . ivy-next-line)
            ("C-k" . ivy-previous-line)
@@ -451,14 +451,6 @@ Note the :tangle no after the begin_src block : this means that this block will 
   (use-package flycheck
     :hook (prog-mode . flycheck-mode))
 #+end_src
-** Company
-#+begin_src emacs-lisp
-  (use-package company
-    :hook
-    ((prog-mode . company-mode))
-    :config
-    (global-company-mode))
-#+end_src
 ** LSP Mode
 #+begin_src emacs-lisp
   (use-package lsp-mode
@@ -467,8 +459,21 @@ Note the :tangle no after the begin_src block : this means that this block will 
     (lsp-keymap-prefix "C-c l")
     :config
     (lsp-enable-which-key-integration t))
-
-  (use-package lsp-ui)
+#+end_src
+** Company
+#+begin_src emacs-lisp
+  (use-package company
+    :after lsp-mode
+    :hook
+    (lsp-mode . company-mode)
+    :bind
+    (:map company-active-map
+          ("<tab>" . company-complete-selection))
+    (:map lsp-mode-map
+          ("<tab>" . company-indent-or-complete-common))
+    :custom
+    (company-minimum-prefix-length 1)
+    (company-idle-delay 0.0))
 #+end_src
 ** Languages
 *** Rust
@@ -476,11 +481,12 @@ Note the :tangle no after the begin_src block : this means that this block will 
   (use-package flycheck-rust)
 
   (use-package rust-mode
+    :after (flycheck flycheck-rust)
     :hook
-    ((rust-mode . (lambda ()
-                    (lsp)
-                    (setq indent-tabs-mode nil)))
-     (flycheck-mode . (lambda () (flycheck-rust-setup)))))
+    (rust-mode . (lambda ()
+                     (lsp-deferred)
+                     (setq indent-tabs-mode nil)))
+    (flycheck-mode . flycheck-rust-setup))
 #+end_src
 *** Toml
 #+begin_src emacs-lisp
