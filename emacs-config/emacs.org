@@ -479,22 +479,21 @@ Allows trying trying packages without installing them
 ** Languages
 *** Rust
 #+begin_src emacs-lisp
-    (use-package flycheck-rust)
+  (use-package flycheck-rust)
 
-    (use-package rust-mode
-      :after (flycheck flycheck-rust)
-      :custom (rust-format-on-save t)
-      :hook
-      (rust-mode . (lambda ()
-                     (lsp-deferred)
-                     (setq indent-tabs-mode nil)))
-      (flycheck-mode . flycheck-rust-setup)
-      :config
-        (wgc/leader
-         :keymaps 'rust-mode-map
-         "br" 'rust-run
-         "bc" 'rust-compile))
-
+  (use-package rust-mode
+    :after (flycheck flycheck-rust)
+    :custom (rust-format-on-save t)
+    :hook
+    (rust-mode . (lambda ()
+                   (lsp-deferred)
+                   (setq indent-tabs-mode nil)))
+    (flycheck-mode . flycheck-rust-setup)
+    :config
+      (wgc/leader
+       :keymaps 'rust-mode-map
+       "br" 'rust-run
+       "bc" 'rust-compile))
 #+end_src
 *** Toml
 #+begin_src emacs-lisp
