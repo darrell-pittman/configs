@@ -278,15 +278,14 @@ Allows trying trying packages without installing them
     (projectile-mode)
     (when (file-directory-p "~/projects")
       (setq projectile-project-search-path '("~/projects")))
-    (setq projectile-switch-project-action #'projectile-dired))
-
+    (setq projectile-switch-project-action #'projectile-dired)
+    :config
+    (wgc/leader
+      "p" '(projectile-command-map :which-key "projectile")))
 
   (use-package counsel-projectile
     :init
     (counsel-projectile-mode))
-
-  (wgc/leader
-    "p" '(projectile-command-map :which-key "projectile"))
 #+end_src
 * Org Mode
 ** Setup Functions
@@ -459,6 +458,12 @@ Allows trying trying packages without installing them
     :custom
     (lsp-keymap-prefix "C-SPC l")
     :config
+    (fset 'lsp-command-map lsp-command-map)
+    (wgc/leader
+      :keymaps 'prog-mode-map
+      "l" '(lsp-command-map :which-key "lsp"))
+    (let ((lsp-keymap-prefix "SPC l"))
+      (lsp-enable-which-key-integration t))
     (lsp-enable-which-key-integration t))
 #+end_src
 ** Company
@@ -490,10 +495,10 @@ Allows trying trying packages without installing them
                    (setq indent-tabs-mode nil)))
     (flycheck-mode . flycheck-rust-setup)
     :config
-      (wgc/leader
-       :keymaps 'rust-mode-map
-       "br" 'rust-run
-       "bc" 'rust-compile))
+    (wgc/leader
+      :keymaps 'rust-mode-map
+      "br" 'rust-run
+      "bc" 'rust-compile))
 #+end_src
 *** Toml
 #+begin_src emacs-lisp
