@@ -457,11 +457,9 @@ Allows trying trying packages without installing them
     :commands (lsp lsp-deferred)
     :config
     (fset 'lsp-command-map lsp-command-map)
-
-    ;; Couldn't use lsp-mode-map here, not sure why.
-    ;; Add other keymaps for other languages as needed.
     (wgc/leader
-      :keymaps '(rust-mode-map)
+      :definer 'minor-mode
+      :keymaps '(lsp-mode)
       "l" '(lsp-command-map :which-key "lsp"))
     (let ((lsp-keymap-prefix "SPC l"))
       (lsp-enable-which-key-integration t))
