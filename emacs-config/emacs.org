@@ -451,10 +451,30 @@ Allows trying trying packages without installing them
   (use-package flycheck
     :hook (prog-mode . flycheck-mode))
 #+end_src
+** Company
+#+begin_src emacs-lisp
+  (use-package company
+    :commands company-indent-or-complete-common
+    :hook
+    ((emacs-lisp-mode lsp-mode) . company-mode)
+    :bind
+    (:map company-active-map
+          ("<tab>" . company-complete-common)
+          ("<return>" . company-complete-selection)
+          ("C-j" . company-select-next)
+          ("C-k" . company-select-previous))
+    :custom
+    (company-minimum-prefix-length 1)
+    (company-idle-delay 0.0))
+#+end_src
 ** LSP Mode
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :commands (lsp lsp-deferred)
+    :bind
+    (:map lsp-mode-map
+          ("<tab>" . company-indent-or-complete-common)
+          ("<return>" . company-indent-or-complete-common))
     :config
     (fset 'lsp-command-map lsp-command-map)
     (wgc/leader
@@ -465,21 +485,6 @@ Allows trying trying packages without installing them
       (lsp-enable-which-key-integration t))
     (let ((lsp-keymap-prefix "C-SPC l"))
       (lsp-enable-which-key-integration t)))
-#+end_src
-** Company
-#+begin_src emacs-lisp
-  (use-package company
-    :after lsp-mode
-    :hook
-    (lsp-mode . company-mode)
-    :bind
-    (:map company-active-map
-          ("<tab>" . company-complete-selection))
-    (:map lsp-mode-map
-          ("<tab>" . company-indent-or-complete-common))
-    :custom
-    (company-minimum-prefix-length 1)
-    (company-idle-delay 0.0))
 #+end_src
 ** Languages
 *** Rust
