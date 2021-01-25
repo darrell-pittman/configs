@@ -455,16 +455,15 @@ Allows trying trying packages without installing them
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :commands (lsp lsp-deferred)
-    :custom
-    (lsp-keymap-prefix "C-SPC l")
     :config
     (fset 'lsp-command-map lsp-command-map)
     (wgc/leader
-      :keymaps 'prog-mode-map
+      :keymaps '(rust-mode-map)
       "l" '(lsp-command-map :which-key "lsp"))
     (let ((lsp-keymap-prefix "SPC l"))
       (lsp-enable-which-key-integration t))
-    (lsp-enable-which-key-integration t))
+    (let ((lsp-keymap-prefix "C-SPC l"))
+      (lsp-enable-which-key-integration t)))
 #+end_src
 ** Company
 #+begin_src emacs-lisp
