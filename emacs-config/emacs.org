@@ -359,10 +359,22 @@ Allows trying trying packages without installing them
 #+end_src
 ** Look and Feel
 #+begin_src emacs-lisp
+  (defun wgc/open-org-file (file-name)
+    (find-file
+     (f-join wgc/org-files-dir file-name)))
+
+  (defun wgc/open-org-task-file ()
+    "Open tasks.org file."
+    (interactive)
+    (wgc/open-org-file "tasks.org"))
+
   (wgc/leader
     "oa" 'org-agenda
     "ol" 'org-store-link
-    "oc" 'org-capture)
+    "oc" 'org-capture
+    "of" '(:ignore t :which-key "org files")
+    "oft" '(wgc/open-org-task-file :which-key "tasks"))
+
 
   (use-package org-bullets
     :after org
@@ -389,12 +401,6 @@ Allows trying trying packages without installing them
   (add-hook 'org-mode-hook
             (lambda () (add-hook 'after-save-hook #'wgc/tangle-config)))
 #+end_src
-** Misc 
-#+begin_src emacs-lisp
-  (defun wgc/open-task-file ()
-    (find-file
-     (expand-file-name "~/Documents/org-files/tasks.org")))
-#+end_src
 * Paredit
 #+begin_src emacs-lisp
   (use-package paredit
@@ -417,6 +423,14 @@ Allows trying trying packages without installing them
   (use-package expand-region
     :bind
     (("C-=" . er/expand-region)))
+#+end_src
+* F
+#+begin_src emacs-lisp
+  (use-package f
+    :commands (f-join)
+    :config
+    (defconst wgc/documents-dir (f-expand "Documents") "Documents Folder")
+    (defconst wgc/org-files-dir (f-join wgc/documents-dir "org-files") "Org Files Folder"))
 #+end_src
 * Programming
 ** Magit
