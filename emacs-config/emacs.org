@@ -363,17 +363,15 @@ Allows trying trying packages without installing them
     (find-file
      (f-join wgc/org-files-dir file-name)))
 
-  (defun wgc/open-org-task-file ()
-    "Open tasks.org file."
-    (interactive)
-    (wgc/open-org-file "tasks.org"))
-
   (wgc/leader
     "oa" 'org-agenda
     "ol" 'org-store-link
     "oc" 'org-capture
     "of" '(:ignore t :which-key "org files")
-    "oft" '(wgc/open-org-task-file :which-key "tasks"))
+    "oft" '((lambda ()
+              "Open tasks.org file."
+              (interactive)
+              (wgc/open-org-file "tasks.org")) :which-key "tasks"))
 
 
   (use-package org-bullets
