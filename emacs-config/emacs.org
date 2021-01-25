@@ -466,10 +466,11 @@ Allows trying trying packages without installing them
 ** Company
 #+begin_src emacs-lisp
   (use-package company
-    :commands company-indent-or-complete-common
     :hook
-    ((emacs-lisp-mode lsp-mode) . company-mode)
+    (prog-mode . company-mode)
     :bind
+    (:map prog-mode-map
+          ("<tab>" . company-indent-or-complete-common))
     (:map company-active-map
           ("<tab>" . company-complete-common)
           ("<return>" . company-complete-selection)
@@ -478,15 +479,15 @@ Allows trying trying packages without installing them
     :custom
     (company-minimum-prefix-length 1)
     (company-idle-delay 0.0))
+
+  (use-package company-box
+    :hook (company-mode . company-box-mode))
 #+end_src
 ** LSP Mode
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :commands (lsp lsp-deferred)
-    :bind
-    (:map lsp-mode-map
-          ("<tab>" . company-indent-or-complete-common)
-          ("<return>" . company-indent-or-complete-common))
+  
     :config
     (fset 'lsp-command-map lsp-command-map)
     (wgc/leader
