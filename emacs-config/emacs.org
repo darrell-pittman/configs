@@ -462,7 +462,13 @@ Allows trying trying packages without installing them
 ** Flycheck
 #+begin_src emacs-lisp
   (use-package flycheck
-    :hook (prog-mode . flycheck-mode))
+    :hook (prog-mode . flycheck-mode)
+    :config
+      (fset 'flycheck-command-map flycheck-command-map)
+      (wgc/leader
+        :definer 'minor-mode
+        :keymaps '(flycheck-mode)
+        "!" '(flycheck-command-map :which-key "flycheck")))
 #+end_src
 ** Company
 #+begin_src emacs-lisp
