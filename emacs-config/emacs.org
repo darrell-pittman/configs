@@ -502,16 +502,16 @@ Allows trying trying packages without installing them
 ** Languages
 *** Rust
 #+begin_src emacs-lisp
-  (use-package flycheck-rust)
+  (use-package flycheck-rust
+    :commands flycheck-rust-setup)
 
   (use-package rust-mode
-    :after (flycheck flycheck-rust)
     :custom (rust-format-on-save t)
     :hook
+    (flycheck-mode . flycheck-rust-setup)
     (rust-mode . (lambda ()
                    (lsp-deferred)
                    (setq indent-tabs-mode nil)))
-    (flycheck-mode . flycheck-rust-setup)
     :config
     (wgc/leader
       :keymaps 'rust-mode-map
