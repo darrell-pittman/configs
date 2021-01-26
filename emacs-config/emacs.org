@@ -244,6 +244,7 @@ Allows trying trying packages without installing them
 
   (use-package evil-collection
     :after evil
+    :custom (evil-collection-company-use-tng nil)
     :config
     (evil-collection-init))
 #+end_src
@@ -472,10 +473,10 @@ Allows trying trying packages without installing them
     (:map prog-mode-map
           ("<tab>" . company-indent-or-complete-common))
     (:map company-active-map
-          ("<tab>" . company-complete-common)
-          ("<return>" . company-complete-selection)
           ("C-j" . company-select-next)
-          ("C-k" . company-select-previous))
+          ("C-k" . company-select-previous)
+          ("M-j" . company-select-next-or-abort)
+          ("M-k" . company-select-previous-or-abort))
     :custom
     (company-minimum-prefix-length 1)
     (company-idle-delay 0.0))
@@ -487,7 +488,6 @@ Allows trying trying packages without installing them
 #+begin_src emacs-lisp
   (use-package lsp-mode
     :commands (lsp lsp-deferred)
-  
     :config
     (fset 'lsp-command-map lsp-command-map)
     (wgc/leader
