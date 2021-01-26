@@ -432,6 +432,10 @@ Allows trying trying packages without installing them
     (defconst wgc/org-files-dir (f-join wgc/documents-dir "org-files") "Org Files Folder"))
 #+end_src
 * Programming
+** Gdb
+#+begin_src emacs-lisp
+  (setq gdb-many-windows t)
+#+end_src
 ** Magit
 #+begin_src emacs-lisp
   (use-package magit
