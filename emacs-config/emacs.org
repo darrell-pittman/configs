@@ -293,8 +293,7 @@ Allows trying trying packages without installing them
 #+begin_src emacs-lisp
   (defun wgc/org-mode-setup ()
     (org-indent-mode)
-    (variable-pitch-mode 1)
-    (visual-line-mode 1))
+    (variable-pitch-mode 1))
 
   (defun wgc/org-fonts-setup ()
     ;; Replace list hyphen with dot
@@ -432,6 +431,14 @@ Allows trying trying packages without installing them
     (defconst wgc/org-files-dir (f-join wgc/documents-dir "org-files") "Org Files Folder"))
 #+end_src
 * Programming
+** Commenting
+#+begin_src emacs-lisp
+  (use-package evil-nerd-commenter
+    :config
+    (wgc/leader
+      :keymaps 'prog-mode-map
+      "ec" 'evilnc-comment-or-uncomment-lines))
+#+end_src
 ** Gdb
 #+begin_src emacs-lisp
   (setq gdb-many-windows t)
