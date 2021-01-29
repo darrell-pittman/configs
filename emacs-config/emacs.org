@@ -444,6 +444,9 @@ Allows trying trying packages without installing them
     :config
     (setq term-prompt-regexp wgc/shell-prompt-pattern)
     (evil-set-initial-state 'term-mode 'emacs))
+
+  (use-package eterm-256color
+    :hook (term-mode . eterm-256color-mode))
 #+end_src
 ** Shell
 #+begin_src emacs-lisp
@@ -457,6 +460,14 @@ Allows trying trying packages without installing them
   (use-package eshell
     :config
     (evil-set-initial-state 'eshell-mode 'emacs))
+#+end_src
+** VTerm
+#+begin_src emacs-lisp
+  (use-package vterm
+    :custom
+    (vterm-max-scrollback 10000)
+    :config
+    (evil-set-initial-state 'vterm-mode 'emacs))
 #+end_src
 * Programming
 ** Commenting
