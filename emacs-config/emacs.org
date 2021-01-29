@@ -82,6 +82,7 @@ Note the :tangle no after the begin_src block : this means that this block will 
 
   ;; Don't display line numbers for some modes
   (dolist (mode '(org-mode-hook
+                  vterm-mode-hook
                   term-mode-hook
                   eshell-mode-hook
                   shell-mode-hook
@@ -457,9 +458,44 @@ Allows trying trying packages without installing them
 #+end_src
 ** EShell
 #+begin_src emacs-lisp
+  (use-package eshell-git-prompt)
+
+  (defun wgc/configure-eshell ()
+    ;; Save command history when commands are entered
+    (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
+
+    ;; Truncate buffer for performance
+    (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
+
+    (evil-define-key
+      '(normal insert visual)
+      eshell-mode-map
+      (kbd "C-r")
+      'counsel-esh-history)
+
+    (evil-define-key
+      '(normal insert visual)
+      eshell-mode-map
+      (kbd "<home>")
+      'eshell-bol)
+
+    (evil-normalize-keymaps)
+    (setq eshell-history-size              10000
+          eshell-buffer-maximum-lines      10000
+          eshell-hist-ignoredups           t
+          eshell-scroll-to-bottom-on-input t))
+
   (use-package eshell
+    :hook
+    (eshell-first-time-mode . wgc/configure-eshell)
     :config
-    (evil-set-initial-state 'eshell-mode 'emacs))
+
+    (with-eval-after-load 'esh-opt
+      (setq eshell-destroy-buffer-when-process-dies t))
+    (with-eval-after-load 'em-term
+      (add-to-list 'eshell-visual-commands "vim"))
+
+    (eshell-git-prompt-use-theme 'powerline))
 #+end_src
 ** VTerm
 #+begin_src emacs-lisp
@@ -467,7 +503,10 @@ Allows trying trying packages without installing them
     :custom
     (vterm-max-scrollback 10000)
     :config
-    (evil-set-initial-state 'vterm-mode 'emacs))
+    (evil-set-initial-state 'vterm-mode 'emacs)
+    (wgc/leader
+      :keymaps 'vterm-mode-map
+      "ee" '(vterm-send-escape :which-key "vterm escape")))
 #+end_src
 * Programming
 ** Commenting
