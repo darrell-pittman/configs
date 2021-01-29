@@ -1,4 +1,3 @@
-#+TITLE: My Emacs Config
 #+STARTUP: overview
 #+PROPERTY: header-args:emacs-lisp :tangle ~/.emacs.d/emacs.el
 * Sample init.el
@@ -39,11 +38,17 @@ Note the :tangle no after the begin_src block : this means that this block will 
 
   ;; Save temporary file to tmp dir and don't create lock files
   (setq backup-directory-alist
-        `((".*" . ,temporary-file-directory)))
+	`((".*" . ,temporary-file-directory)))
   (setq auto-save-file-name-transforms
-        `((".*" ,temporary-file-directory t))) 
+	`((".*" ,temporary-file-directory t))) 
 
   (setq create-lockfiles nil)
+
+  (require 'shell)
+  (defconst
+    wgc/shell-prompt-pattern
+    shell-prompt-pattern
+    "Reg exp to match terminal prompts")
 #+end_src
 
 ** Helper Functions
@@ -155,6 +160,7 @@ Note the :tangle no after the begin_src block : this means that this block will 
       "g" '(:ignore t :which-key "git")
       "t" '(:ignore t :which-key "toggles")
       "e" '(:ignore t :which-key "edits")
+      "ec" '(:ignore t :which-key "comments")
       "e SPC" 'set-mark-command
       "SPC" 'universal-argument)
     (general-def "<f5>" 'revert-buffer)
@@ -214,24 +220,15 @@ Allows trying trying packages without installing them
 #+end_src
 * Evil Mode
 #+begin_src emacs-lisp
-  (defun wgc/evil-hook ()
-    (dolist (mode '(custom-mode
-                    eshell-mode
-                    git-rebase-mode
-                    erc-mode
-                    term-mode
-                    shell-mode))
-      (add-to-list 'evil-emacs-state-modes mode)))
-
   (use-package evil
-    :init
-    (setq evil-want-integration t)
-    (setq evil-want-keybinding nil)
-    (setq evil-want-C-u-scroll t)
-    (setq evil-want-C-i-jump nil)
-    (evil-mode)
-    :hook (evil-mode . wgc/evil-hook)
+    :commands (evil-set-initial-state)
+    :custom
+    (evil-want-integration t)
+    (evil-want-keybinding nil)
+    (evil-want-C-u-scroll t)
+    (evil-want-C-i-jump nil)
     :config
+    (evil-mode 1)
     (general-define-key
      :keymaps 'evil-insert-state-map
      "C-g" 'evil-normal-state
@@ -247,16 +244,18 @@ Allows trying trying packages without installing them
     :custom (evil-collection-company-use-tng nil)
     :config
     (evil-collection-init))
+
 #+end_src
 * Key Chord
 #+begin_src emacs-lisp
   (use-package key-chord
+    :after evil
     :init (key-chord-mode)
     :custom
     (key-chord-two-keys-delay 0.2)
-    (key-chord-one-key-delay 0.3))
-
-  (key-chord-define evil-insert-state-map "jk" 'evil-normal-state)
+    (key-chord-one-key-delay 0.3)
+    :config
+    (key-chord-define evil-insert-state-map "jk" 'evil-normal-state))
 #+end_src
 * Hydra
 #+begin_src emacs-lisp
@@ -430,6 +429,35 @@ Allows trying trying packages without installing them
     (defconst wgc/documents-dir (f-expand "Documents") "Documents Folder")
     (defconst wgc/org-files-dir (f-join wgc/documents-dir "org-files") "Org Files Folder"))
 #+end_src
+* Erc
+#+begin_src emacs-lisp
+  (use-package erc
+    :config
+    (evil-set-initial-state 'erc-mode 'emacs))
+#+end_src
+* Shells
+** Term
+#+begin_src emacs-lisp
+  (use-package term
+    :custom
+    (explicit-shell-file-name "bash")
+    :config
+    (setq term-prompt-regexp wgc/shell-prompt-pattern)
+    (evil-set-initial-state 'term-mode 'emacs))
+#+end_src
+** Shell
+#+begin_src emacs-lisp
+  (use-package shell
+    :config
+    (setq term-prompt-regexp wgc/shell-prompt-pattern)
+    (evil-set-initial-state 'shell-mode 'emacs))
+#+end_src
+** EShell
+#+begin_src emacs-lisp
+  (use-package eshell
+    :config
+    (evil-set-initial-state 'eshell-mode 'emacs))
+#+end_src
 * Programming
 ** Commenting
 #+begin_src emacs-lisp
@@ -437,7 +465,14 @@ Allows trying trying packages without installing them
     :config
     (wgc/leader
       :keymaps 'prog-mode-map
-      "ec" 'evilnc-comment-or-uncomment-lines))
+      "ecc" '(evilnc-comment-or-uncomment-lines :which-key "lines")
+      "ecl" '(evilnc-quick-comment-or-uncomment-to-the-line
+              :which-key "quick to line")
+      "ecp" '(evilnc-comment-or-uncomment-paragraphs
+              :which-key "paragraph")
+      "ecr" '(comment-or-uncomment-region :which-key "region")
+      "ecv" '(evilnc-toggle-invert-comment-line-by-line
+              :which-key "line by line")))
 #+end_src
 ** Gdb
 #+begin_src emacs-lisp
@@ -451,6 +486,7 @@ Allows trying trying packages without installing them
      #'magit-display-buffer-same-window-except-diff-v1)
     (magit-no-message '("Turning on magit-auto-revert-mode..."))
     :config
+    (evil-set-initial-state 'git-rebase-mode 'emacs)
     (setq magit-auto-revert-mode t))
 
   (general-def
@@ -475,11 +511,11 @@ Allows trying trying packages without installing them
   (use-package flycheck
     :hook (prog-mode . flycheck-mode)
     :config
-      (fset 'flycheck-command-map flycheck-command-map)
-      (wgc/leader
-        :definer 'minor-mode
-        :keymaps '(flycheck-mode)
-        "!" '(flycheck-command-map :which-key "flycheck")))
+    (fset 'flycheck-command-map flycheck-command-map)
+    (wgc/leader
+      :definer 'minor-mode
+      :keymaps '(flycheck-mode)
+      "!" '(flycheck-command-map :which-key "flycheck")))
 #+end_src
 ** Company
 #+begin_src emacs-lisp
@@ -499,6 +535,7 @@ Allows trying trying packages without installing them
     (company-idle-delay 0.0))
 
   (use-package company-box
+    :custom (company-box-doc-enable nil)
     :hook (company-mode . company-box-mode))
 #+end_src
 ** LSP Mode
@@ -515,6 +552,10 @@ Allows trying trying packages without installing them
       (lsp-enable-which-key-integration t))
     (let ((lsp-keymap-prefix "C-SPC l"))
       (lsp-enable-which-key-integration t)))
+
+  (use-package lsp-ui
+    :custom
+    (lsp-ui-doc-show-with-cursor nil))
 #+end_src
 ** Languages
 *** Rust
@@ -539,4 +580,3 @@ Allows trying trying packages without installing them
 #+begin_src emacs-lisp
   (use-package toml)
 #+end_src
-
