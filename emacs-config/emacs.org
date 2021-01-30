@@ -38,9 +38,9 @@ Note the :tangle no after the begin_src block : this means that this block will 
 
   ;; Save temporary file to tmp dir and don't create lock files
   (setq backup-directory-alist
-	`((".*" . ,temporary-file-directory)))
+        `((".*" . ,temporary-file-directory)))
   (setq auto-save-file-name-transforms
-	`((".*" ,temporary-file-directory t))) 
+        `((".*" ,temporary-file-directory t))) 
 
   (setq create-lockfiles nil)
 
@@ -49,14 +49,6 @@ Note the :tangle no after the begin_src block : this means that this block will 
     wgc/shell-prompt-pattern
     shell-prompt-pattern
     "Reg exp to match terminal prompts")
-#+end_src
-
-** Helper Functions
-#+begin_src emacs-lisp
-  (defun wgc/load-if-exists (f)
-    "load the elisp file only if it exists and is readable"
-    (when (file-readable-p f)
-      (load-file f)))
 #+end_src
 * Interface Tweaks
 ** Look and Feel
@@ -391,8 +383,10 @@ Allows trying trying packages without installing them
 ** Auto Tangle Config File
 #+begin_src emacs-lisp
   (defun wgc/tangle-config ()
-    (when (string-equal (buffer-file-name)
-                        (expand-file-name "~/configs/emacs-config/emacs.org"))
+    (when (or (string-equal (buffer-file-name)
+                            (expand-file-name "~/configs/emacs-config/emacs.org"))
+              (string-equal (buffer-file-name)
+                            (expand-file-name "~/configs/emacs-config/emacs-private.org")))
       (let ((org-confirm-babel-evaluate nil))
         (org-babel-tangle))))
 
@@ -629,4 +623,16 @@ Allows trying trying packages without installing them
 *** Toml
 #+begin_src emacs-lisp
   (use-package toml)
+#+end_src
+* Helper Functions
+#+begin_src emacs-lisp
+  (defun wgc/load-if-exists (f)
+    "load the elisp file only if it exists and is readable"
+    (when (file-readable-p f)
+      (load-file f)))
+#+end_src
+* Final Init
+#+begin_src emacs-lisp
+  (wgc/load-if-exists
+   (expand-file-name "emacs-private.el" user-emacs-directory))
 #+end_src
