@@ -490,6 +490,10 @@ Allows trying trying packages without installing them
       (add-to-list 'eshell-visual-commands "vim"))
 
     (eshell-git-prompt-use-theme 'powerline))
+
+
+  (wgc/leader
+    "te" 'eshell)
 #+end_src
 ** VTerm
 #+begin_src emacs-lisp
@@ -635,4 +639,6 @@ Allows trying trying packages without installing them
 #+begin_src emacs-lisp
   (wgc/load-if-exists
    (expand-file-name "emacs-private.el" user-emacs-directory))
+
+  (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+end_src
