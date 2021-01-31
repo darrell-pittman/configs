@@ -214,7 +214,7 @@ Allows trying trying packages without installing them
 * Evil Mode
 #+begin_src emacs-lisp
   (use-package evil
-    :commands (evil-set-initial-state)
+    :commands (evil-set-initial-state evil-collection-define-key)
     :custom
     (evil-want-integration t)
     (evil-want-keybinding nil)
@@ -383,10 +383,11 @@ Allows trying trying packages without installing them
 ** Auto Tangle Config File
 #+begin_src emacs-lisp
   (defun wgc/tangle-config ()
-    (when (or (string-equal (buffer-file-name)
-                            (expand-file-name "~/configs/emacs-config/emacs.org"))
-              (string-equal (buffer-file-name)
-                            (expand-file-name "~/configs/emacs-config/emacs-private.org")))
+    (when (let* ((buffer-check (apply-partially 'string= (buffer-file-name)))
+                 (buffer-names '("emacs.org" "emacs-private.org"))
+                 (expander (lambda (s) (f-expand s "~/configs/emacs-config/")))
+                 (expanded-names (seq-map expander buffer-names)))
+            (seq-some buffer-check expanded-names))
       (let ((org-confirm-babel-evaluate nil))
         (org-babel-tangle))))
 
@@ -416,13 +417,27 @@ Allows trying trying packages without installing them
     :bind
     (("C-=" . er/expand-region)))
 #+end_src
-* F
+* File Management
+** F
 #+begin_src emacs-lisp
   (use-package f
-    :commands (f-join)
+    :commands (f-join f-expand)
     :config
     (defconst wgc/documents-dir (f-expand "Documents") "Documents Folder")
     (defconst wgc/org-files-dir (f-join wgc/documents-dir "org-files") "Org Files Folder"))
+#+end_src
+** Dired
+#+begin_src emacs-lisp
+  (use-package dired
+    :ensure nil
+    :commands (dired dired-jump)
+    :custom
+    (dired-listing-switches "=agho --group-directories-first")
+    :bind (("C-x C-j" . dired-jump))
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "h" 'dired-up-directory
+      "l" 'dired-find-file))
 #+end_src
 * Erc
 #+begin_src emacs-lisp
