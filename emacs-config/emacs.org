@@ -392,13 +392,13 @@ Allows trying trying packages without installing them
 #+begin_src emacs-lisp
   (defun wgc/tangle-config ()
     "Tangle org init files."
-    (let ((file-name (buffer-file-name)))
-      (when (and file-name
-                 (->> '("emacs.org" "emacs-private.org")
-                      (-map (-rpartial 'f-expand "~/configs/emacs-config"))
-                      (-any? (-partial 'f-same? file-name))))
-        (let ((org-confirm-babel-evaluate nil))
-          (org-babel-tangle)))))
+    (when-let
+        ((file-name (buffer-file-name))
+         (match (->> '("emacs.org" "emacs-private.org")
+                     (-map (-rpartial 'f-expand "~/configs/emacs-config"))
+                     (-any? (-partial 'f-same? file-name)))))
+      (let ((org-confirm-babel-evaluate nil))
+        (org-babel-tangle))))
 
   (add-hook 'org-mode-hook
             (lambda () (add-hook 'after-save-hook #'wgc/tangle-config)))
