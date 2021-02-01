@@ -194,6 +194,7 @@ Allows trying trying packages without installing them
   (use-package counsel
     :bind(([remap execute-extended-command] . counsel-M-x)
           ([remap find-file] . counsel-find-file)
+          ([remap describe-bindings] . counsel-descbinds)
           ("C-x b" . counsel-switch-buffer)
           :map minibuffer-local-map
           ("C-r" . counsel-minibuffer-history)))
@@ -392,13 +393,12 @@ Allows trying trying packages without installing them
 #+begin_src emacs-lisp
   (defun wgc/tangle-config ()
     "Tangle org init files."
-    (when-let
-        ((file-name (buffer-file-name))
-         (match (->> '("emacs.org" "emacs-private.org")
-                     (-map (-rpartial 'f-expand "~/configs/emacs-config"))
-                     (-any? (-partial 'f-same? file-name)))))
-      (let ((org-confirm-babel-evaluate nil))
-        (org-babel-tangle))))
+    (when-let ((file-name (buffer-file-name)))
+      (when (->> '("emacs.org" "emacs-private.org")
+                 (-map (-rpartial 'f-expand "~/configs/emacs-config"))
+                 (-any? (-partial 'f-same? file-name)))
+        (let ((org-confirm-babel-evaluate nil))
+          (org-babel-tangle)))))
 
   (add-hook 'org-mode-hook
             (lambda () (add-hook 'after-save-hook #'wgc/tangle-config)))
@@ -441,12 +441,20 @@ Allows trying trying packages without installing them
     :ensure nil
     :commands (dired dired-jump)
     :custom
+    (dired-auto-revert-buffer t)
     (dired-listing-switches "-agho --group-directories-first")
     :bind (("C-x C-j" . dired-jump))
     :config
     (evil-collection-define-key 'normal 'dired-mode-map
-      "h" 'dired-up-directory
-      "l" 'dired-find-file))
+      "h" 'dired-single-up-directory
+      "l" 'dired-single-buffer))
+
+  (use-package dired-single)
+
+  (use-package dired-open
+    :config
+    (add-to-list 'dired-open-functions #'dired-open-xdg t)
+    (setq dired-open-extensions '(("pdf" . "qpdfview"))))
 #+end_src
 * Erc
 #+begin_src emacs-lisp
