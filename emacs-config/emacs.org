@@ -280,6 +280,14 @@ Allows trying trying packages without installing them
     :init
     (counsel-projectile-mode))
 #+end_src
+* Dash
+#+begin_src emacs-lisp
+  (use-package dash
+    :config
+    (global-dash-fontify-mode)
+    (with-eval-after-load 'info-look
+      (dash-register-info-lookup)))
+#+end_src
 * Org Mode
 ** Setup Functions
 #+begin_src emacs-lisp
@@ -383,13 +391,14 @@ Allows trying trying packages without installing them
 ** Auto Tangle Config File
 #+begin_src emacs-lisp
   (defun wgc/tangle-config ()
-    (when (let* ((buffer-check (apply-partially 'string= (buffer-file-name)))
-                 (buffer-names '("emacs.org" "emacs-private.org"))
-                 (expander (lambda (s) (f-expand s "~/configs/emacs-config/")))
-                 (expanded-names (seq-map expander buffer-names)))
-            (seq-some buffer-check expanded-names))
-      (let ((org-confirm-babel-evaluate nil))
-        (org-babel-tangle))))
+    "Tangle org init files."
+    (let ((file-name (buffer-file-name)))
+      (when (and file-name
+                 (->> '("emacs.org" "emacs-private.org")
+                      (-map (-rpartial 'f-expand "~/configs/emacs-config"))
+                      (-any? (-partial 'f-same? file-name))))
+        (let ((org-confirm-babel-evaluate nil))
+          (org-babel-tangle)))))
 
   (add-hook 'org-mode-hook
             (lambda () (add-hook 'after-save-hook #'wgc/tangle-config)))
@@ -432,7 +441,7 @@ Allows trying trying packages without installing them
     :ensure nil
     :commands (dired dired-jump)
     :custom
-    (dired-listing-switches "=agho --group-directories-first")
+    (dired-listing-switches "-agho --group-directories-first")
     :bind (("C-x C-j" . dired-jump))
     :config
     (evil-collection-define-key 'normal 'dired-mode-map
