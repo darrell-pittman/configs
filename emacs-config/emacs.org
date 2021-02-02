@@ -281,14 +281,6 @@ Allows trying trying packages without installing them
     :init
     (counsel-projectile-mode))
 #+end_src
-* Dash
-#+begin_src emacs-lisp
-  (use-package dash
-    :config
-    (global-dash-fontify-mode)
-    (with-eval-after-load 'info-look
-      (dash-register-info-lookup)))
-#+end_src
 * Org Mode
 ** Setup Functions
 #+begin_src emacs-lisp
@@ -362,7 +354,7 @@ Allows trying trying packages without installing them
 #+begin_src emacs-lisp
   (defun wgc/open-org-file (file-name)
     (find-file
-     (f-join wgc/org-files-dir file-name)))
+     (expand-file-name "tasks.org" "~/Documents/org-files")))
 
   (wgc/leader
     "oa" 'org-agenda
@@ -389,19 +381,18 @@ Allows trying trying packages without installing them
   (use-package visual-fill-column
     :hook (org-mode . wgc/org-mode-fill-column))
 #+end_src
-** Auto Tangle Config File
+** Auto Tangle Config Files
 #+begin_src emacs-lisp
-  (defun wgc/tangle-config ()
+  (defun wgc/tangle-configs ()
     "Tangle org init files."
-    (when-let ((file-name (buffer-file-name)))
-      (when (->> '("emacs.org" "emacs-private.org")
-                 (-map (-rpartial 'f-expand "~/configs/emacs-config"))
-                 (-any? (-partial 'f-same? file-name)))
-        (let ((org-confirm-babel-evaluate nil))
-          (org-babel-tangle)))))
+    (when (thread-last '("emacs.org" "emacs-private.org")
+            (mapcar (lambda (f) (expand-file-name f "~/configs/emacs-config")))
+            (seq-some (apply-partially 'string= (buffer-file-name))))
+      (let ((org-confirm-babel-evaluate nil))
+        (org-babel-tangle))))
 
   (add-hook 'org-mode-hook
-            (lambda () (add-hook 'after-save-hook #'wgc/tangle-config)))
+            (lambda () (add-hook 'after-save-hook #'wgc/tangle-configs)))
 #+end_src
 * Paredit
 #+begin_src emacs-lisp
@@ -426,16 +417,7 @@ Allows trying trying packages without installing them
     :bind
     (("C-=" . er/expand-region)))
 #+end_src
-* File Management
-** F
-#+begin_src emacs-lisp
-  (use-package f
-    :commands (f-join f-expand)
-    :config
-    (defconst wgc/documents-dir (f-expand "Documents") "Documents Folder")
-    (defconst wgc/org-files-dir (f-join wgc/documents-dir "org-files") "Org Files Folder"))
-#+end_src
-** Dired
+* Dired
 #+begin_src emacs-lisp
   (use-package dired
     :ensure nil
@@ -453,8 +435,14 @@ Allows trying trying packages without installing them
 
   (use-package dired-open
     :config
-    (add-to-list 'dired-open-functions #'dired-open-xdg t)
+    ;; (add-to-list 'dired-open-functions #'dired-open-xdg t)
     (setq dired-open-extensions '(("pdf" . "qpdfview"))))
+
+  (use-package dired-hide-dotfiles
+    :hook (dired-mode . dired-hide-dotfiles-mode)
+    :config
+    (evil-collection-define-key 'normal 'dired-mode-map
+      "H" 'dired-hide-dotfiles-mode))
 #+end_src
 * Erc
 #+begin_src emacs-lisp
