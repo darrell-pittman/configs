@@ -159,6 +159,33 @@ Note the :tangle no after the begin_src block : this means that this block will 
     (general-def "<f5>" 'revert-buffer)
     (general-def "<escape>" 'keyboard-escape-quit))
 #+end_src
+* IBuffer
+#+begin_src emacs-lisp
+  (use-package ibuffer
+    :custom
+    (ibuffer-show-empty-filter-groups nil)
+    (ibuffer-saved-filter-groups
+     '(("home"
+        ("emacs-config" (or (filename . ".emacs.d")
+                            (filename . "emacs-config")))
+        ("Org" (or (mode . org-mode)
+                   (filename . "org-mode")))
+        ("code" (filename . "code"))
+        ("Web Dev" (or (mode . html-mode)
+                       (mode . css-mode)))
+        ("Magit" (name . "\*magit"))
+        ("ERC" (mode . erc-mode))
+        ("Help" (or (name . "\*Help\*")
+                    (name . "\*Apropos\*")
+                    (name . "\*info\*"))))))
+    (ibuffer-expert t)
+    :hook
+    (ibuffer-mode . (lambda ()
+                      (ibuffer-auto-mode 1)
+                      (ibuffer-switch-to-saved-filter-groups "home")))
+    :config
+    (general-def "C-x C-b" 'ibuffer))
+#+end_src
 * Try
 Allows trying trying packages without installing them
 #+begin_src emacs-lisp
@@ -525,6 +552,13 @@ Allows trying trying packages without installing them
     (wgc/leader
       :keymaps 'vterm-mode-map
       "ee" '(vterm-send-escape :which-key "vterm escape")))
+#+end_src
+** IElm
+#+begin_src emacs-lisp
+  (use-package ielm
+    :ensure nil
+    :config
+    (evil-set-initial-state 'ielm-mode 'emacs))
 #+end_src
 * Programming
 ** Commenting
