@@ -173,7 +173,7 @@ Note the :tangle no after the begin_src block : this means that this block will 
         ("code" (filename . "code"))
         ("Web Dev" (or (mode . html-mode)
                        (mode . css-mode)))
-        ("Magit" (name . "\*magit"))
+        ("Magit" (name . "magit"))
         ("ERC" (mode . erc-mode))
         ("Help" (or (name . "\*Help\*")
                     (name . "\*Apropos\*")
