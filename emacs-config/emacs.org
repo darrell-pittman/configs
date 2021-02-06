@@ -121,6 +121,12 @@ Note the :tangle no after the begin_src block : this means that this block will 
   (use-package rainbow-delimiters
     :hook (prog-mode . rainbow-delimiters-mode))
 #+end_src
+** Beacon
+#+begin_src emacs-lisp
+  (use-package beacon
+    :config
+    (beacon-mode 1))
+#+end_src
 * Modeline
 #+begin_src emacs-lisp
   (use-package all-the-icons
@@ -355,8 +361,8 @@ Allows trying trying packages without installing them
     :hook (org-mode . wgc/org-mode-setup)
     :custom
     (org-ellipsis " ▾")
-    (org-agenda-files
-     '("~/Documents/org-files/tasks.org"))
+    (org-directory "~/Documents/org-files")
+    (org-agenda-files '("~/Documents/org-files/tasks.org"))
     (org-agenda-start-with-log-mode t)
     (org-log-done 'time)
     (org-log-into-drawer t)

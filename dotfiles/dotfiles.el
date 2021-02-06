@@ -4,8 +4,15 @@
 
 (require 'org)
 
-(defconst dotfiles-folder "~/configs/emacs-config" "Folder containing dotfiles.")
-(defconst dotfiles-org-files '("emacs.org" "emacs-private.org") "List of dotfiles.")
+(defcustom dotfiles-folder "~/configs/emacs-config"
+  "Folder where 'dotfiles and 'org-mode configuration files are stored."
+  :type 'string
+  :group 'dotfiles)
+
+(defcustom dotfiles-org-files '("emacs.org" "emacs-private.org")
+  "List of 'org-mode files in the `dotfiles-folder' that contains files that should be tangled."
+  :type '(list string)
+  :group 'dotfiles)
 
 (defun dotfiles-tangle-org-file (&optional org-file)
   "Tangles ORG-FILE."
