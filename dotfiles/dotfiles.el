@@ -1,4 +1,4 @@
-;;; Package -- Summary
+;;; dotfiles.el -- Simple package to tangle org config files.
 ;;; Commentary:
 ;;; Code:
 
