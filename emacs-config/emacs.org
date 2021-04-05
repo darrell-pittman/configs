@@ -675,23 +675,24 @@ Allows trying trying packages without installing them
 ** Languages
 *** Rust
 #+begin_src emacs-lisp
-      (use-package flycheck-rust
-        :commands flycheck-rust-setup)
+  (use-package flycheck-rust
+    :commands flycheck-rust-setup)
 
-      (use-package rust-mode
-        :custom (rust-format-on-save t)
-        :hook
-        (flycheck-mode . flycheck-rust-setup)
-        (rust-mode . (lambda ()
-                       (lsp-deferred)
-                       (setq indent-tabs-mode nil)))
-        :config
-        (wgc/leader
-          :keymaps 'rust-mode-map
-          "br" 'rust-run
-          "bc" 'rust-compile
-          "bk" 'rust-check
-          "bt" 'rust-test))
+  (use-package rust-mode
+    :custom
+    (rust-format-on-save t)
+    :hook
+    (flycheck-mode . flycheck-rust-setup)
+    (rust-mode . (lambda ()
+                   (lsp-deferred)
+                   (setq indent-tabs-mode nil)))
+    :config
+    (wgc/leader
+      :keymaps 'rust-mode-map
+      "br" 'rust-run
+      "bc" 'rust-compile
+      "bk" 'rust-check
+      "bt" 'rust-test))
 #+end_src
 *** C/C++
 #+begin_src emacs-lisp
