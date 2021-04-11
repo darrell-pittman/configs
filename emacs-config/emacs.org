@@ -670,7 +670,7 @@ Allows trying trying packages without installing them
   (use-package gud
     :ensure nil
     :custom
-    (gdb-many-windows t))
+    (gdb-many-windows nil))
 #+end_src
 ** Languages
 *** Rust
