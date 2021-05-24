@@ -273,6 +273,11 @@ Allows trying trying packages without installing them
     :config
     (evil-collection-init))
 
+  (defadvice evil-inner-word (around underscore-as-word activate)
+    (let ((table (copy-syntax-table (syntax-table))))
+      (modify-syntax-entry ?_ "w" table)
+      (with-syntax-table table
+        ad-do-it)))
 #+end_src
 * Key Chord
 #+begin_src emacs-lisp
@@ -611,7 +616,9 @@ Allows trying trying packages without installing them
     "gp" 'magit-pull-branch
     "gf" 'magit-fetch
     "gF" 'magit-fetch-all
-    "gr" 'magit-rebase)
+    "gr" 'magit-rebase
+    "gm" 'magit-merge
+    "gv" 'vc-refresh-state)
 #+end_src
 ** Flycheck
 #+begin_src emacs-lisp
